@@ -1,4 +1,4 @@
-[README.md](https://github.com/user-attachments/files/33733303/README.md)
+
 # 🚀 Projeto Final | Processo Seletivo 26.2 - IbmecJr x Visagio
 
 Bem-vindo ao repositório oficial da área de **Produtos e Inovações** do Projeto Final do Processo Seletivo 26.2 da **IbmecJr. Soluções** em parceria com o **Grupo Visagio**.
