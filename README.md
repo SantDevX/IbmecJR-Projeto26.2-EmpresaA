@@ -1,8 +1,9 @@
+[README.md](https://github.com/user-attachments/files/33733303/README.md)
 # 🚀 Projeto Final | Processo Seletivo 26.2 - IbmecJr x Visagio
 
-Bem-vindo ao repositório oficial da área de **Produtos e Inovações** do Projeto Final do Processo Seletivo 26.2 da **IbmecJr. Soluções** em parceria com o **Grupo Visagio**. 
+Bem-vindo ao repositório oficial da área de **Produtos e Inovações** do Projeto Final do Processo Seletivo 26.2 da **IbmecJr. Soluções** em parceria com o **Grupo Visagio**.
 
-Este espaço documenta a concepção, o desenvolvimento e a prototipagem da nossa solução baseada em Inteligência Artificial aplicada ao setor de Óleo e Gás.
+Este espaço documenta a concepção, o desenvolvimento e a prototipagem do **InspectAI**, nossa solução baseada em Inteligência Artificial aplicada ao setor de Óleo e Gás.
 
 ---
 
@@ -26,17 +27,64 @@ Como líder do ecossistema de criação da miniempresa, a nossa área foi respon
 ├── assets/                  # Imagens, diagramas, wireframes e vídeos do protótipo
 ├── docs/                    # Documentações complementares e especificações de produto
 ├── prototype/               # Arquivos, códigos ou links referentes ao protótipo demonstrativo
+│   ├── frontend/            # Protótipos das máquinas (simuladores em HTML)
+│   └── backend/             # Envio via MQTT, código do n8n e backup do fluxo
 └── README.md                # Documentação principal do projeto
 ```
 
 ---
 
-## 🛠️ Detalhes da Solução (Em Desenvolvimento)
+## 🛠️ Detalhes da Solução
 
-* **Problema Identificado:** *(Descreva aqui o problema crítico encontrado na operação de Óleo e Gás)*
-* **Proposta de Solução (IA):** *(Explique brevemente como a Inteligência Artificial atua para resolver o problema)*
-* **Proposta de Valor:** *(Como o produto gera eficiência, redução de custos ou novos ganhos para o cliente)*
-* **Protótipo:** *(Instruções ou links para acessar o protótipo demonstrativo)*
+### ❗ Problema Identificado
+As máquinas das plataformas param **sem aviso**, e a manutenção só acontece **depois da falha**. Além disso, a informação **demora a chegar** nos setores certos, o que aumenta o tempo parado, gera multas contratuais e coloca a equipe em risco.
+- Operadoras offshore têm em média **27 dias de parada não planejada por ano**, com custo de cerca de **US$ 38 milhões** (Kimberlite/GE, 2016)
+- **48%** dos técnicos perdem 1 h ou mais por turno esperando aprovações (Limble, 2026)
+
+### 🤖 Proposta de Solução (IA)
+O **InspectAI** detecta anomalias nos sensores **antes** da falha e organiza automaticamente o que cada setor precisa fazer:
+1. 🛢️ **Detecção:** os dados dos sensores (pressão, temperatura, vibração e tensão) saem do SCADA e passam pelo **gateway** na plataforma, que identifica o que está fora do normal
+2. 📮 **Envio:** o alerta viaja pelo protocolo **MQTT**, leve e ideal para a internet via satélite
+3. 🤖 **Diagnóstico:** o **Agente 1 (ChatGPT)** escreve a causa provável, a ação imediata e a ação preventiva
+4. 🧐 **Revisão:** o **Agente 2 (Claude Haiku)**, de outra empresa, revisa o diagnóstico e corrige se precisar
+5. 👷 **Validação humana:** o **Controle de Qualidade** confirma o diagnóstico (✅ Validar) ou descarta (❌ Alarme falso)
+6. 📣 **Ação:** após a validação, **todos os setores** recebem o alerta **ao mesmo tempo** no Telegram (Jurídico, Equipe Técnica, Estoque, Financeiro, Compras e RH & Escala)
+7. 📊 **Registro:** cada alerta é salvo numa planilha com data, hora, sensor, valor e diagnóstico, garantindo **rastreabilidade**
+
+> A IA **aponta onde olhar**, mas **não substitui** o técnico: duas IAs se conferem e um profissional sempre valida.
+
+### 💰 Proposta de Valor
+- **Menos paradas:** empresas que monitoram por dados tiveram **5,42%** de tempo parado, contra **8,43%** na manutenção reativa (Kimberlite/GE, 2016)
+- **Planejamento:** avisar antes dá tempo de levar peça e técnico até a plataforma
+- **Comunicação:** cada setor recebe o alerta no seu grupo, sem depender de repasses
+- **Segurança:** alertas 🔴 críticos destacados para ação imediata
+- **Acessível para médio porte:** usa o SCADA que já existe e ferramentas de baixo custo (n8n, Telegram e Google Sheets)
+
+### 🖥️ Protótipo
+**Arquitetura:**
+```text
+🛢️ Simulador da bomba (HTML) → 📮 Broker MQTT (HiveMQ) → 📥 n8n → 🤖 Agente 1 → 🧐 Agente 2 → 👷 Controle de Qualidade → ✈️ 7 grupos no Telegram + 📊 Google Sheets
+```
+
+| Peça | Ferramenta | Papel |
+|---|---|---|
+| Máquina simulada | HTML + JavaScript | Gera uma falha aleatória e publica o alerta |
+| Envio | MQTT (QoS 1) | Garante que o alerta não se perde no caminho |
+| Broker | HiveMQ (público, para testes) | Recebe e entrega as mensagens |
+| Automação | n8n | Orquestra todo o fluxo |
+| Diagnóstico | OpenAI gpt-5-mini | Escreve o diagnóstico |
+| Revisão | Anthropic Claude Haiku 4.5 | Revisa e corrige o diagnóstico |
+| Validação e alertas | Telegram (bot + 8 grupos) | Botões do Controle de Qualidade e alertas dos setores |
+| Registro | Google Sheets | Histórico de alertas |
+
+**Como testar:**
+1. No n8n, abrir o fluxo e clicar em **Execute workflow**
+2. Abrir o simulador da bomba no navegador e esperar **"✅ Conectado ao broker"**
+3. Clicar em **Iniciar** e depois em **Forçar falha**
+4. No grupo do **Controle de Qualidade**, clicar em **✅ Validar**
+5. Conferir o alerta nos grupos dos setores e a nova linha na planilha
+
+> ⚠️ No protótipo, as falhas são **simuladas** e o broker é público. Na versão real, os dados vêm do SCADA, o machine learning roda no gateway e o broker é privado, com senha. Tokens e chaves **não** ficam neste repositório.
 
 ---
 
