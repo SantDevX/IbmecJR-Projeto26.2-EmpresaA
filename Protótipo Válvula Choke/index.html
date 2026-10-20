@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PETRAVIC - System Válvula Choke</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!--
+  COMO LER ESTE SITE
+  Agora o site está dividido em 3 arquivos, cada um com um trabalho:
+
+    index.html  (este arquivo)  diz O QUE existe na tela (botões, faixa de estado, desenho da válvula)
+    style.css                   diz COMO cada coisa aparece (cores, tamanhos, animação)
+    script.js                   diz O QUE ACONTECE quando alguém clica ou o tempo passa
+
+  O HTML liga os outros dois: o <link> no <head> chama o CSS e o <script> no final chama o JavaScript.
+  Os 4 arquivos (index.html, style.css, script.js e logo-petravic.png) precisam ficar na mesma pasta.
+-->
+<!-- ================= index.html: a estrutura ================= -->
+<!-- CABEÇALHO: faixa escura no topo, com a logo da PETRAVIC no canto esquerdo e o nome do sistema embaixo.
+     A imagem da logo é o arquivo logo-petravic.png, na mesma pasta. -->
+<header class="cabecalho">
+  <div class="logo-placa"><img src="Petrovicsemfundo-logo.png" alt="Logo PETRAVIC"></div>
+  <h1>System Válvula Choke</h1>
+</header>
+
+<div class="pagina">
+
+  <p class="intro">Clique em Iniciar. Depois de alguns segundos, um problema aleatório aparece. Ou escolha o problema em "Forçar problema".</p>
+
+  <!-- Os botões. O "id" é o nome que o JavaScript usa para encontrar cada um. -->
+  <div class="botoes">
+    <button type="button" id="botao-iniciar" class="principal">Iniciar</button>
+    <button type="button" id="botao-falha" class="destaque" disabled>Forçar problema</button>
+    <button type="button" id="botao-reiniciar">Reiniciar</button>
+  </div>
+
+  <!-- A sub aba do "Forçar problema". Começa escondida (hidden).
+       Cada botão chama dispararFalha(N), em que N é a posição do problema na lista "falhas" do JavaScript (começa em 0). -->
+  <div id="submenu" class="cartao submenu" hidden>
+    <h2>Qual problema você quer forçar?</h2>
+    <button type="button" onclick="dispararFalha(0)">Desgaste começando no trim <span class="tag aviso">AVISO</span></button>
+    <button type="button" onclick="dispararFalha(1)">Vibração por cavitação <span class="tag aviso">AVISO</span></button>
+    <button type="button" onclick="dispararFalha(2)">Erosão grave do trim por areia <span class="tag atencao">ATENÇÃO</span></button>
+    <button type="button" onclick="dispararFalha(3)">Furo no corpo da válvula <span class="tag atencao">ATENÇÃO</span></button>
+    <button type="button" onclick="dispararFalha(4)">Pedido de manutenção com linha pressurizada <span class="tag atencao">ATENÇÃO</span></button>
+    <button type="button" class="principal" onclick="sortearFalha()">Aleatório (o sistema escolhe)</button>
+  </div>
+
+  <div class="layout">
+
+    <!-- COLUNA PRINCIPAL -->
+    <main>
+      <!-- A faixa de estado: muda de cor (NORMAL, AVISO ou ATENÇÃO) -->
+      <div id="estado" class="estado">
+        <h2 id="estado-nome">DESLIGADO</h2>
+        <p id="estado-texto">Clique em Iniciar para começar o monitoramento.</p>
+      </div>
+
+      <!-- O relatório começa escondido (hidden). O JavaScript mostra quando há problema. -->
+      <div id="relatorio" class="cartao relatorio" role="alert" hidden>
+        <h2>Relatório do sistema</h2>
+        <p><strong>Horário:</strong> <span id="rel-hora"></span></p>
+        <p><strong>Enviar para:</strong> <span id="rel-setor"></span></p>
+        <p><strong>Nível:</strong> <span id="rel-nivel"></span></p>
+        <p><strong>Problema:</strong> <span id="rel-nome"></span></p>
+        <p><strong>O que está acontecendo:</strong> <span id="rel-causa"></span></p>
+        <p><strong>Tempo estimado:</strong> <span id="rel-dias"></span></p>
+        <p><strong>O que fazer:</strong> <span id="rel-acao"></span></p>
+      </div>
+
+      <!-- O desenho da válvula choke. SVG é uma forma de desenhar com texto: retângulos, linhas, círculos. -->
+      <div class="cena">
+        <svg id="valvula" viewBox="0 0 400 240" role="img" aria-label="Válvula choke">
+          <rect class="chao" x="0" y="210" width="400" height="30"/>
+          <rect class="cano" x="0" y="150" width="160" height="30"/>           <!-- cano de entrada -->
+          <rect class="cano" x="240" y="150" width="160" height="30"/>         <!-- cano de saída -->
+          <line class="fluxo" x1="0" y1="165" x2="160" y2="165"/>              <!-- fluido entrando -->
+          <line class="fluxo" x1="240" y1="165" x2="400" y2="165"/>            <!-- fluido saindo -->
+          <rect class="corpo" x="150" y="120" width="100" height="90" rx="8"/> <!-- o corpo da choke -->
+          <rect class="corpo" x="185" y="70" width="30" height="55"/>          <!-- a parte de cima -->
+          <line class="haste" x1="200" y1="40" x2="200" y2="75"/>              <!-- a haste -->
+          <g class="volante">                                                  <!-- o volante que gira -->
+            <rect x="160" y="34" width="80" height="12" rx="6" fill="#153049"/>
+          </g>
+          <circle cx="200" cy="165" r="12" fill="#F5F4EF" stroke="#153049" stroke-width="3"/> <!-- o orifício (bean) -->
+          <text x="8" y="140" font-size="14" fill="#153049">Entrada</text>
+          <text x="340" y="140" font-size="14" fill="#153049">Saída</text>
+        </svg>
+      </div>
+
+      <!-- Os 6 sensores. Cada um mostra um número que o JavaScript atualiza. -->
+      <div class="sensores">
+        <div class="sensor"><span>Pressão entrada (psi)</span><strong id="pressaoEntrada">--</strong></div>
+        <div class="sensor"><span>Pressão saída (psi)</span><strong id="pressaoSaida">--</strong></div>
+        <div class="sensor"><span>Vazão (gpm)</span><strong id="vazao">--</strong></div>
+        <div class="sensor"><span>Desvio do Cv (%)</span><strong id="desvio">--</strong></div>
+        <div class="sensor"><span>Nível de areia (0 a 10)</span><strong id="areia">--</strong></div>
+        <div class="sensor"><span>Vibração (mm/s)</span><strong id="vibracao">--</strong></div>
+      </div>
+    </main>
+
+    <!-- COLUNA LATERAL: verificação de manutenção -->
+    <aside class="cartao lateral">
+      <h2>Manutenção</h2>
+      <button type="button" id="botao-manutencao" class="destaque grande" disabled>Momento de manutenção</button>
+      <div id="manut-caixa" class="manut-caixa">
+        <h3 id="manut-nome">AGUARDANDO</h3>
+        <p id="manut-texto">Inicie o sistema e clique no botão acima para saber se está seguro fazer a manutenção.</p>
+        <ul id="manut-lista"></ul>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- O JavaScript fica no arquivo script.js (precisa vir no final, depois de todo o HTML) -->
+<script src="script.js"></script>
+
+</body>
+</html>
