@@ -24,12 +24,32 @@ Como líder do ecossistema de criação da miniempresa, a nossa área foi respon
 
 ## 📂 Estrutura do Repositório
 ```text
-├── assets/                  # Imagens, diagramas, wireframes e vídeos do protótipo
-├── docs/                    # Documentações complementares e especificações de produto
-├── prototype/               # Arquivos, códigos ou links referentes ao protótipo demonstrativo
-│   ├── frontend/            # Protótipos das máquinas (simuladores em HTML)
-│   └── backend/             # Envio via MQTT, código do n8n e backup do fluxo
-└── README.md                # Documentação principal do projeto
+├── .vscode/
+│   └── settings.json
+├── assets/                                  # Pasta reservada para recursos compartilhados
+│   └── .gitkeep
+├── docs/                                    # Pasta reservada para documentação complementar
+│   └── .gitkeep
+├── Pagina-Apresentacao/
+│   ├── fonts/                               # Fontes Manrope, Montserrat e Poppins
+│   ├── img/                                 # Logos, favicon e ilustrações da apresentação
+│   ├── index.html                           # Página inicial e apresentação dos projetos
+│   ├── sobre.html                           # Página institucional
+│   ├── contato.html                         # Página de contato
+│   └── style.css                            # Estilos das páginas de apresentação
+├── Protótipo-Máquina-Centrífuga-API610/
+│   ├── inicio.html                          # Interface do simulador de bomba centrífuga
+│   ├── style.css
+│   ├── script.js
+│   ├── Petrovicsemfundo-logo.png
+│   └── engrenagem.png
+├── prototipo-valvula-choke/
+│   ├── index.html                           # Interface do simulador da válvula choke
+│   ├── style.css
+│   ├── script.js
+│   ├── Petrovicsemfundo-logo.png
+│   └── engrenagem.png
+└── README.md                                # Documentação principal do projeto
 ```
 
 ---
