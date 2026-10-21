@@ -49,7 +49,7 @@ button.destaque  { background: #153049; border-color: #153049; color: #FFFFFF; }
 .submenu h2 { margin: 0 0 8px 0; font-size: 18px; }
 .submenu button { display: block; width: 100%; text-align: left; border-radius: 10px; font-size: 15px; margin-bottom: 8px; }
 .tag { float: right; font-size: 12px; padding: 3px 8px; border-radius: 999px; font-weight: bold; }
-.tag.risco   { background: #B35900; color: #FFFFFF; } /* Tom de amarelo escuro ajustado para contraste no WAVE */
+.tag.risco   { background: #E0A800; color: #FFFFFF; } /* Tom de amarelo escuro ajustado para contraste no WAVE */
 .tag.critico { background: #A30000; color: #FFFFFF; }
 
 /* Layout Grid */
