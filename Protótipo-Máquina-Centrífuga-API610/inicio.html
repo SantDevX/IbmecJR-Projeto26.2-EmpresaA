@@ -54,8 +54,8 @@
   <!-- Os botões. O "id" é o nome que o JavaScript usa para encontrar cada um. -->
   <div class="botoes">
     <button type="button" id="botao-iniciar" class="principal">Iniciar</button>
-    <button type="button" id="botao-alerta">Simular alerta</button>
-    <button type="button" id="botao-risco">Simular risco</button>
+    <button type="button" id="botao-alerta">Simular estado de alerta</button>
+    <button type="button" id="botao-risco">Simular estado risco</button>
     <button type="button" id="botao-reiniciar">Reiniciar</button>
   </div>
 
@@ -63,19 +63,6 @@
   <div id="card-status" class="card-status desligado" role="status">
     <h2 id="status-titulo">DESLIGADO</h2>
     <p id="status-texto">Clique em Iniciar para começar o monitoramento.</p>
-  </div>
-
-  <div id="relatorio" class="relatorio" hidden>
-    <h2>Relatório do sistema</h2>
-    <p><strong>Horário:</strong> <span id="rel-horario"></span></p>
-    <p><strong>Enviar para:</strong> <span id="rel-enviar"></span></p>
-    <p><strong>Nível:</strong> <span id="rel-nivel"></span></p>
-    <p><strong>Problema:</strong> <span id="rel-problema"></span></p>
-    <p><strong>O que está acontecendo:</strong> <span id="rel-acontecendo"></span></p>
-    <p><strong>Tempo estimado:</strong> <span id="rel-tempo"></span></p>
-    <p><strong>O que fazer:</strong> <span id="rel-fazer"></span></p>
-    <p><strong>Onde fica na válvula:</strong> <span id="rel-onde"></span></p>
-    <p><strong>Base técnica:</strong> <span id="rel-base"></span></p>
   </div>
 
   <!-- O desenho da bomba. SVG é uma forma de desenhar com texto: retângulos, linhas, círculos. -->
@@ -147,7 +134,7 @@
       <p id="status-vazao" class="status">Aguardando</p>
       <p class="faixa f-normal">Normal: 108 a 132 m³/h</p>
       <p class="faixa f-alerta">Alerta: 92 a 107 m³/h (queda progressiva)</p>
-      <p class="faixa f-risco">Risco: menos de 90 ou mais de 150 m³/h</p>
+      <p class="faixa f-risco">Crítico: menos de 90 ou mais de 150 m³/h</p>
       <p class="componente"><strong>Rotor / Impelidor:</strong> erosão das pás internas ou cavitação na linha de sucção.</p>
     </div>
 
@@ -157,7 +144,7 @@
       <p id="status-pressao" class="status">Aguardando</p>
       <p class="faixa f-normal">Normal: 46,0 a 55,0 bar</p>
       <p class="faixa f-alerta">Alerta: 40,5 a 45,5 bar (oscilação de linha)</p>
-      <p class="faixa f-risco">Risco: menos de 40 ou mais de 60 bar</p>
+      <p class="faixa f-risco">Crítico: menos de 40 ou mais de 60 bar</p>
       <p class="componente"><strong>Selo Mecânico / Válvulas:</strong> perda de contenção primária nas faces de vedação.</p>
     </div>
 
@@ -167,7 +154,7 @@
       <p id="status-temperatura" class="status">Aguardando</p>
       <p class="faixa f-normal">Normal: 70,0 a 90,0 °C</p>
       <p class="faixa f-alerta">Alerta: 90,5 a 98,5 °C (subida de +0,8 °C por dia)</p>
-      <p class="faixa f-risco">Risco: menos de 60 ou mais de 100 °C</p>
+      <p class="faixa f-risco">Crítico: menos de 60 ou mais de 100 °C</p>
       <p class="componente"><strong>Mancal e Ventilação:</strong> degradação do filme lubrificante e atrito metálico severo.</p>
     </div>
 
@@ -177,7 +164,7 @@
       <p id="status-vibracao" class="status">Aguardando</p>
       <p class="faixa f-normal">Normal: 0,50 a 4,50 mm/s</p>
       <p class="faixa f-alerta">Alerta: 4,60 a 6,80 mm/s (curva ascendente)</p>
-      <p class="faixa f-risco">Risco: mais de 7,00 mm/s</p>
+      <p class="faixa f-risco">Crítico: mais de 7,00 mm/s</p>
       <p class="componente"><strong>Rolamento Radial e Eixo:</strong> folga mecânica, desalinhamento ou fissura na pista.</p>
     </div>
 
@@ -187,7 +174,7 @@
       <p id="status-consumo" class="status">Aguardando</p>
       <p class="faixa f-normal">Normal: 3,10 a 3,90 kWh/m³</p>
       <p class="faixa f-alerta">Alerta: 3,95 a 4,35 kWh/m³ (sobrecarga)</p>
-      <p class="faixa f-risco">Risco: menos de 2,8 ou mais de 4,4 kWh/m³</p>
+      <p class="faixa f-risco">Crítico: menos de 2,8 ou mais de 4,4 kWh/m³</p>
       <p class="componente"><strong>Motor Elétrico:</strong> aumento de corrente exigido para vencer resistência mecânica.</p>
     </div>
 

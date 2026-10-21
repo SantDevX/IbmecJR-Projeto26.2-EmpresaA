@@ -21,8 +21,8 @@
   var mensagens = {
     desligado: { titulo: "DESLIGADO", texto: "Clique em Iniciar para começar o monitoramento." },
     normal:    { titulo: "NORMAL",    texto: "Tudo certo. Todos os sensores estão dentro da faixa normal." },
-    aviso:     { titulo: "AVISO",     texto: "Problema não urgente. Programe a manutenção." },
-    atencao:   { titulo: "ATENÇÃO",   texto: "Problema sério. Não abra a válvula e avise os setores." }
+    alerta:    { titulo: "ALERTA",    texto: "Problema não urgente. Programe a manutenção." },
+    critico:   { titulo: "CRÍTICO",   texto: "Problema sério. Não abra a válvula e avise os setores." }
   };
 
   // O nome de cada status, como aparece na etiqueta do sensor.
@@ -138,7 +138,7 @@
     return "alerta";   // fora do normal, mas ainda sem chegar no risco
   }
 
-  // Troca a cor e os textos do card de status. "chave" é: desligado, normal, aviso ou atencao.
+  // Troca a cor e os textos do card de status. "chave" é: desligado, normal, alerta ou critico.
   function mostrarCard(chave) {
     cardStatus.className = "card-status " + chave;
     tituloStatus.textContent = mensagens[chave].titulo;
@@ -189,8 +189,8 @@
     }
 
     // O card de cima mostra o pior caso.
-    if (pior === "risco") mostrarCard("atencao");
-    else if (pior === "alerta") mostrarCard("aviso");
+    if (pior === "risco") mostrarCard("critico");
+    else if (pior === "alerta") mostrarCard("alerta");
     else mostrarCard("normal");
   }
 
