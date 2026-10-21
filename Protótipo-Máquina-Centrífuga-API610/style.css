@@ -4,7 +4,7 @@
   /* O atributo "hidden" esconde um elemento. */
   [hidden] { display: none; }
 
-  body { background-color: #12485C; background-image: linear-gradient(135deg, #17566B, #0E3A4F); color: #FFFFFF; font-family: Arial, Helvetica, sans-serif; padding: 0; margin: 0; }
+  body { background-color: #12485C; background-image: linear-gradient(135deg, #10283F, #10283F); color: #FFFFFF; font-family: Arial, Helvetica, sans-serif; padding: 0; margin: 0; }
   .cabecalho { background: #F5F4EF; border-bottom: 4px solid #1D908F; padding: 10px 24px; }
   .cabecalho img { display: block; width: 170px; max-width: 100%; height: auto; }
   .cabecalho h1 { margin: 6px 0 0 0; font-size: 17px; line-height: 1.1; letter-spacing: 0.5px; color: #153049; }
