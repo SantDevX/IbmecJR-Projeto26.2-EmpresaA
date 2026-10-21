@@ -44,50 +44,25 @@ button:focus-visible { outline: 3px solid #10283F; outline-offset: 2px; }
 button.principal { background: #FFFFFF; border-color: #153049; color: #153049; }
 button.destaque  { background: #153049; border-color: #153049; color: #FFFFFF; }
 
-/* Botão Momento de Manutenção Retangular */
-button.btn-manutencao {
-  display: block;
-  width: 100%;
-  padding: 14px 18px;
-  font-size: 18px;
-  font-weight: bold;
-  color: #153049;
-  background-color: #F5F4EF;
-  border: 2px solid #153049;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-}
-
 /* Submenu */
 .submenu { margin-bottom: 14px; max-height: 70vh; overflow-y: auto; }
 .submenu h2 { margin: 0 0 8px 0; font-size: 18px; }
 .submenu button { display: block; width: 100%; text-align: left; border-radius: 10px; font-size: 15px; margin-bottom: 8px; }
 .tag { float: right; font-size: 12px; padding: 3px 8px; border-radius: 999px; font-weight: bold; }
-.tag.risco   { background: #F2B705; color: #153049; }
-.tag.critico { background: #D93025; color: #FFFFFF; }
+.tag.risco   { background: #E0A800; color: #FFFFFF; } /* Tom de amarelo escuro ajustado para contraste no WAVE */
+.tag.critico { background: #A30000; color: #FFFFFF; }
 
 /* Layout Grid */
-.layout { display: grid; grid-template-columns: 1fr 290px; gap: 16px; align-items: start; }
+.layout { display: block; }
 .layout > main > * { margin-bottom: 14px; }
-@media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }
 
 /* Faixas de Estado */
 .estado { border-radius: 14px; padding: 16px; background: #f1efea; color: #153049; }
 .estado h2 { margin: 0; font-size: 30px; }
 .estado p { margin: 4px 0 0 0; }
-.estado.normal  { background: #1D908F; color: #FFFFFF; }
-.estado.risco   { background: #F2B705; color: #153049; }
-.estado.critico { background: #D93025; color: #FFFFFF; }
-
-/* Manutenção */
-.lateral h2 { margin: 0 0 10px 0; }
-.manut-caixa { border-radius: 12px; padding: 12px; margin-top: 12px; background: #cecece; color: #153049; }
-.manut-caixa h3 { margin: 0; font-size: 26px; }
-.manut-caixa p { margin: 6px 0 0 0; }
-.manut-caixa ul { padding-left: 20px; margin: 6px 0 0 0; }
-.manut-caixa.seguro    { background: #17803F; color: #FFFFFF; }
-.manut-caixa.naoseguro { background: #D93025; color: #FFFFFF; }
+.estado.normal  { background: #15655C; color: #FFFFFF; }
+.estado.risco   { background: #E0A800; color: #FFFFFF; } /* Alerta/Atenção otimizado para contraste */
+.estado.critico { background: #A30000; color: #FFFFFF; }
 
 /* Desenho da Válvula */
 .cena { background: #e6f7f3; border-radius: 14px; padding: 8px; }
@@ -99,11 +74,11 @@ svg { display: block; width: 100%; height: auto; }
 .zona { fill: none; stroke: none; }
 .porca { fill: #8a949e; stroke: #153049; stroke-width: 1.5; }
 .oring { fill: none; stroke: #0b0b0b; stroke-width: 3; }
-.oring-v { fill: #D93025; stroke: #153049; stroke-width: 1; }
+.oring-v { fill: #A30000; stroke: #153049; stroke-width: 1; }
 .marca { stroke: #153049; stroke-width: 1; }
 .c-amarelo, .c-roxo, .c-rosa, .c-verde, .c-laranja, .c-cinza, .c-vermelho, .c-azulclaro { stroke: #153049; stroke-width: 1.5; }
 .c-amarelo { fill: #F2D21B; } .c-roxo { fill: #9b3fa0; } .c-rosa { fill: #e58aa8; } .c-verde { fill: #3fae49; }
-.c-laranja { fill: #f08a24; } .c-cinza { fill: #8a949e; } .c-vermelho { fill: #d93025; } .c-azulclaro { fill: #5b9bd5; }
+.c-laranja { fill: #f08a24; } .c-cinza { fill: #8a949e; } .c-vermelho { fill: #A30000; } .c-azulclaro { fill: #5b9bd5; }
 .nome-peca { font-size: 11px; fill: #153049; opacity: 0.75; }
 
 .fluxo { stroke: #A1EDDC; stroke-width: 4; stroke-dasharray: 10 8; animation: correr 0.8s linear infinite; animation-play-state: paused; }
@@ -113,16 +88,19 @@ svg { display: block; width: 100%; height: auto; }
 @keyframes correr { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -18; } }
 @keyframes girar  { from { transform: rotate(-12deg); } to { transform: rotate(12deg); } }
 
-/* Sensores & Régua Normal */
-.sensores { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
-.sensor { background: #F5F4EF; border: 3px solid #D9CDB8; border-radius: 10px; padding: 10px; }
+/* Sensores organizados em formato 4x4 (4 colunas exatas) */
+.sensores { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+@media (max-width: 900px) { .sensores { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .sensores { grid-template-columns: 1fr; } }
+
+.sensor { background: #F5F4EF; border: 3px solid #D9CDB8; border-radius: 10px; padding: 12px; }
 .sensor strong { display: block; font-size: 26px; margin: 2px 0; }
-.sensor.ruim { border-color: #D93025; background: #FCE0DD; }
-.regua-normal { display: block; font-size: 11px; color: #555555; margin-top: 4px; border-top: 1px dashed #cccccc; padding-top: 2px; }
+.sensor.ruim { border-color: #A30000; background: #FCE0DD; }
+.regua-normal { display: block; font-size: 11px; color: #444444; margin-top: 4px; border-top: 1px dashed #cccccc; padding-top: 2px; }
 
 /* Destaques e Animações */
-#valvula { --cor-nivel: #F2B705; }
-#valvula.critico { --cor-nivel: #D93025; }
+#valvula { --cor-nivel: #E0A800; }
+#valvula.critico { --cor-nivel: #A30000; }
 
 [data-peca].destacar, [data-peca].destacar * { stroke: var(--cor-nivel) !important; stroke-width: 4 !important; }
 .zona.destacar { fill: var(--cor-nivel); fill-opacity: 0.3; }
@@ -150,6 +128,7 @@ svg { display: block; width: 100%; height: auto; }
 
 .dicas h2 { margin: 0 0 4px 0; font-size: 20px; }
 .dicas h3 { margin: 10px 0 4px 0; font-size: 16px; }
+.dicas-subtitulo { font-size: 18px; font-weight: bold; color: #153049; margin: 4px 0; }
 .dicas p { margin: 4px 0; line-height: 1.4; }
 .dicas ul { margin: 4px 0 0 0; padding-left: 20px; }
 .dicas li { margin-bottom: 3px; }
