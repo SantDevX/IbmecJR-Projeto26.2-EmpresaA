@@ -99,7 +99,7 @@ svg { display: block; width: 100%; height: auto; }
 .regua-normal { display: block; font-size: 11px; color: #444444; margin-top: 4px; border-top: 1px dashed #cccccc; padding-top: 2px; }
 
 /* Destaques e Animações */
-#valvula { --cor-nivel: #B35900; }
+#valvula { --cor-nivel: #E0A800; }
 #valvula.critico { --cor-nivel: #A30000; }
 
 [data-peca].destacar, [data-peca].destacar * { stroke: var(--cor-nivel) !important; stroke-width: 4 !important; }
