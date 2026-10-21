@@ -61,7 +61,7 @@ button.destaque  { background: #153049; border-color: #153049; color: #FFFFFF; }
 .estado h2 { margin: 0; font-size: 30px; }
 .estado p { margin: 4px 0 0 0; }
 .estado.normal  { background: #15655C; color: #FFFFFF; }
-.estado.risco   { background: #B35900; color: #FFFFFF; } /* Alerta/Atenção otimizado para contraste */
+.estado.risco   { background: #E0A800; color: #FFFFFF; } /* Alerta/Atenção otimizado para contraste */
 .estado.critico { background: #A30000; color: #FFFFFF; }
 
 /* Desenho da Válvula */
