@@ -14,9 +14,31 @@
 
   /* Cabeçalho (o "head" do site): faixa pequena no topo, com a logo e o nome do sistema um embaixo do outro.
      A imagem da logo foi cortada rente ao desenho, para a faixa não ficar alta. */
-  .cabecalho { background: #F5F4EF; border-bottom: 4px solid #1D908F; padding: 10px 24px; }
-  .cabecalho img { display: block; width: 170px; max-width: 100%; height: auto; }
-  .cabecalho h1 { margin: 6px 0 0 0; font-size: 17px; line-height: 1.1; letter-spacing: 0.5px; color: #153049; }
+  .cabecalho { position: relative; z-index: 2; padding: 0 32px; background: #F5F4EF; border-bottom: 1px solid rgba(16, 40, 63, 0.12); }
+  .header-container { display: flex; align-items: center; justify-content: space-between; gap: 24px; width: min(100%, 1200px); min-height: 78px; margin: 0 auto; }
+  .cabecalho img { display: block; width: 148px; height: 40px; max-width: 100%; object-fit: contain; }
+  .cabecalho h1 { flex: 1; margin: 0; font-size: 17px; line-height: 1.1; letter-spacing: 0.5px; color: #153049; }
+  .cabecalho nav { position: relative; }
+  .nav-list { display: flex; align-items: center; gap: 24px; margin: 0; padding: 0; list-style: none; }
+  .nav-list a { color: #10283F; font-size: 0.92rem; font-weight: 600; text-decoration: none; transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease; }
+  .nav-list a:hover { color: #1D908F; }
+  .nav-list .nav-inicio { padding: 9px 16px; border: 1px solid rgba(16, 40, 63, 0.28); border-radius: 8px; }
+  .nav-list .nav-inicio:hover { border-color: #1D908F; }
+  .menu-toggle { display: none; padding: 6px; color: #10283F; background: none; border: 0; font-size: 1.6rem; cursor: pointer; }
+  .menu-toggle:focus-visible, .nav-list a:focus-visible { outline: 3px solid #1D908F; outline-offset: 4px; }
+  @media (max-width: 760px) {
+    .cabecalho { padding: 0 18px; }
+    .header-container { min-height: 68px; gap: 12px; }
+    .cabecalho img { width: 120px; height: 36px; }
+    .cabecalho h1 { font-size: 14px; }
+  }
+  @media (max-width: 600px) {
+    .menu-toggle { display: block; }
+    .nav-list { position: absolute; top: calc(100% + 1px); right: -18px; left: -18px; display: none; align-items: stretch; gap: 0; padding: 10px 18px 18px; background: #F5F4EF; border-bottom: 1px solid rgba(16, 40, 63, 0.12); }
+    .nav-list.active { display: flex; flex-direction: column; }
+    .nav-list li { width: 100%; text-align: center; }
+    .nav-list a, .nav-list .nav-inicio { display: block; padding: 13px 16px; border: 0; }
+  }
 
   /* Botões (redondos, com sombra e que "sobem" quando o mouse passa) */
   .botoes { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }

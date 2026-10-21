@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PETRAVIC - System Válvula Choke</title>
+<link rel="icon" href="img/" type="image/svg+xml">
 
 <link rel="stylesheet" href="style.css">
 </head>
@@ -44,8 +45,19 @@
 <!-- CABEÇALHO: faixa escura no topo, com a logo da PETRAVIC no canto esquerdo e o nome do sistema embaixo.
      A imagem da logo é o arquivo logo-petravic.png, na mesma pasta. -->
 <header class="cabecalho">
-  <div class="logo-placa"><img src="Petrovicsemfundo-logo.png" alt="Logo PETRAVIC"></div>
-  <h1>System Válvula Choke</h1>
+  <div class="header-container">
+    <a class="logo-placa" href="../Pagina-Apresentacao/index.html" aria-label="Início da Petravic">
+      <img src="Petrovicsemfundo-logo.png" alt="Logo PETRAVIC">
+    </a>
+    <h1>System Válvula Choke</h1>
+    <nav aria-label="Navegação dos protótipos">
+      <ul class="nav-list">
+        <li><a class="nav-inicio" href="../Pagina-Apresentacao/index.html">Início</a></li>
+        <li><a href="../Protótipo-Máquina-Centrífuga-API610/inicio.html">Máquina Centrífuga</a></li>
+      </ul>
+      <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
+    </nav>
+  </div>
 </header>
 
 <div class="pagina">
@@ -210,6 +222,16 @@
 
 <!-- O JavaScript fica no arquivo script.js (precisa vir no final, depois de todo o HTML) -->
 <script src="script.js"></script>
+<script>
+  const menuToggle = document.querySelector('.menu-toggle');
+  const navList = document.querySelector('.nav-list');
+
+  menuToggle.addEventListener('click', () => {
+    const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+    navList.classList.toggle('active');
+    menuToggle.setAttribute('aria-expanded', String(!isExpanded));
+  });
+</script>
 
 </body>
 </html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="img/petravic-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+    <title>Sobre nós | Petravic</title>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="index.html" aria-label="Página inicial da Petravic">
+                <img src="img/logo-petravic-png.png" alt="Petravic" class="logo">
+            </a>
+            <nav aria-label="Navegação principal">
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-inicio">Início</a></li>
+                    <li><a href="sobre.html" aria-current="page">Sobre</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+                <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="about-page">
+        <section aria-labelledby="about-title">
+            <div class="about-heading">
+                <p class="about-eyebrow">Quem somos</p>
+                <h1 id="about-title">Sobre <span>nós</span></h1>
+            </div>
+
+            <div class="about-panel">
+                <div class="about-copy">
+                    <p>Somos a <strong>Empresa A</strong>, uma equipe de trainees participando do processo seletivo da <strong>Ibmec JR</strong>, com o objetivo de desenvolver soluções tecnológicas inovadoras que gerem valor para as empresas.</p>
+
+                    <p>Nosso projeto consiste no desenvolvimento de uma aplicação que utiliza <strong>Inteligência Artificial para realizar manutenção preditiva ,automatizar a geração de relatórios, realizar diagnósticos e otimizar a comunicação entre os setores e a logística</strong>. A solução busca transformar dados em informações estratégicas, facilitando a identificação de problemas, apoiando a tomada de decisões e promovendo maior integração entre as equipes.</p>
+
+                    <p>Acreditamos que a tecnologia, quando aliada à inovação e à colaboração, é capaz de tornar processos mais eficientes e inteligentes. Por isso, buscamos desenvolver uma ferramenta que conecte pessoas, simplifique rotinas e contribua para melhores resultados organizacionais.</p>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p class="footer-text">2026 &copy; Todos os direitos reservados a Ibmec JR Empresa A</p>
+    </footer>
+
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navList = document.querySelector('.nav-list');
+
+        menuToggle.addEventListener('click', () => {
+            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+            navList.classList.toggle('active');
+            menuToggle.setAttribute('aria-expanded', String(!isExpanded));
+        });
+    </script>
+</body>
+</html>

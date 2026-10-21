@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="img/petravic-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+    <title>Contato | Petravic</title>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="index.html" aria-label="Página inicial da Petravic">
+                <img src="img/logo-petravic-png.png" alt="Petravic" class="logo">
+            </a>
+            <nav aria-label="Navegação principal">
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-inicio">Início</a></li>
+                    <li><a href="sobre.html">Sobre</a></li>
+                    <li><a href="contato.html" aria-current="page">Contato</a></li>
+                </ul>
+                <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="contact-page">
+        <section aria-labelledby="contact-title">
+            <div class="contact-heading">
+                <p class="about-eyebrow">Estamos por aqui</p>
+                <h1 id="contact-title">Fale <span>conosco</span></h1>
+            </div>
+
+            <div class="contact-grid">
+                <a class="contact-card" href="https://www.instagram.com/ibmecjr/" target="_blank" rel="noopener noreferrer">
+                    <h2>Instagram</h2>
+                    <p>@ibmecjr</p>
+                </a>
+                <a class="contact-card" href="https://www.linkedin.com/company/ibmecjr/posts/" target="_blank" rel="noopener noreferrer">
+                    <h2>LinkedIn</h2>
+                    <p>Ibmec Jr</p>
+                </a>
+                <a class="contact-card" href="https://wa.me/5521972257889" target="_blank" rel="noopener noreferrer">
+                    <h2>WhatsApp</h2>
+                    <p>(21) 97225-7889</p>
+                </a>
+                <a class="contact-card" href="mailto:contato@ibmecjr.com.br">
+                    <h2>E-mail</h2>
+                    <p>contato@ibmecjr.com.br</p>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p class="footer-text">2026 &copy; Todos os direitos reservados a Ibmec JR Empresa A</p>
+    </footer>
+
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navList = document.querySelector('.nav-list');
+
+        menuToggle.addEventListener('click', () => {
+            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+            navList.classList.toggle('active');
+            menuToggle.setAttribute('aria-expanded', String(!isExpanded));
+        });
+    </script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Monitor de Bomba Centrífuga</title>
-
+<link rel="icon" href="img/" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -29,8 +29,19 @@
 </div>
 
 <header class="cabecalho">
-  <div class="logo-placa"><img src="Petrovicsemfundo-logo.png" alt="Logo PETRAVIC"></div>
-  <h1>System Máquina Centrífuga API 610</h1>
+  <div class="header-container">
+    <a class="logo-placa" href="../Pagina-Apresentacao/index.html" aria-label="Início da Petravic">
+      <img src="Petrovicsemfundo-logo.png" alt="Logo PETRAVIC">
+    </a>
+    <h1>System Máquina Centrífuga API 610</h1>
+    <nav aria-label="Navegação dos protótipos">
+      <ul class="nav-list">
+        <li><a class="nav-inicio" href="../Pagina-Apresentacao/index.html">Início</a></li>
+        <li><a href="../prototipo-valvula-choke/index.html">Válvula Choke</a></li>
+      </ul>
+      <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
+    </nav>
+  </div>
 </header>
 
 <!-- ================= HTML: a estrutura ================= -->
@@ -182,6 +193,16 @@
 </div>
 
 <script src="script.js" defer></script>
+<script>
+  const menuToggle = document.querySelector('.menu-toggle');
+  const navList = document.querySelector('.nav-list');
+
+  menuToggle.addEventListener('click', () => {
+    const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+    navList.classList.toggle('active');
+    menuToggle.setAttribute('aria-expanded', String(!isExpanded));
+  });
+</script>
 
 </body>
 </html>

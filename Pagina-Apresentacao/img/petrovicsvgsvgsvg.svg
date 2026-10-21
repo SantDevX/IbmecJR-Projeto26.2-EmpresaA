@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <!-- Parte Superior Esquerda (Azul Escuro) -->
+  <path fill="#0c3351" d="M 37.5 17.4 L 13.5 31.2 L 13.5 51 L 55.5 26.8 Z" />
+  
+  <!-- Parte Superior Direita (Verde-Azulado / Teal) -->
+  <path fill="#18767b" d="M 55.5 7 L 37.5 17.4 L 55.5 26.8 L 67.5 33.7 L 77.5 39.5 L 86.5 34.3 L 86.5 24.9 Z" />
+  
+  <!-- Faixa Central (Verde-Água / Menta Claro) -->
+  <path fill="#89e2cc" d="M 39.5 47.5 L 67.5 31.3 L 67.5 43.8 L 39.5 60 Z" />
+  
+  <!-- Parte Inferior Esquerda (Verde-Azulado / Teal) -->
+  <path fill="#18767b" d="M 13.5 62.5 L 39.5 47.5 L 39.5 93 L 13.5 78 Z" />
+  
+  <!-- Parte Inferior Direita (Azul Escuro) -->
+  <path fill="#0c3351" d="M 48.5 56.2 L 77.5 39.5 L 86.5 34.3 L 86.5 52 L 48.5 74 Z" />
+</svg>

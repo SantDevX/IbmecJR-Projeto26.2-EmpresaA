@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 650">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#E8F0ED"/>
+      <stop offset="1" stop-color="#F5F4EF"/>
+    </linearGradient>
+    <linearGradient id="tank" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#DCE5E2"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="650" fill="url(#sky)"/>
+  <circle cx="772" cy="134" r="54" fill="#89E2CC" opacity=".32"/>
+  <path d="M0 434c156-54 263-21 391-54s302-42 569 18v252H0Z" fill="#E1E9E6"/>
+  <path d="M0 490c185-35 309-6 474-28 182-24 310-20 486 19v169H0Z" fill="#D4E0DC"/>
+  <path d="M55 515h842v28H55z" fill="#10283F"/>
+  <path d="M92 493h756v22H92z" fill="#0C9A91"/>
+  <g fill="url(#tank)" stroke="#10283F" stroke-width="8">
+    <path d="M125 369a75 36 0 0 1 150 0v124H125z"/>
+    <ellipse cx="200" cy="369" rx="75" ry="36"/>
+    <path d="M339 335a89 43 0 0 1 178 0v158H339z"/>
+    <ellipse cx="428" cy="335" rx="89" ry="43"/>
+    <path d="M690 390a62 30 0 0 1 124 0v103H690z"/>
+    <ellipse cx="752" cy="390" rx="62" ry="30"/>
+  </g>
+  <g fill="#10283F">
+    <path d="M300 211h61v282h-61z"/>
+    <path d="M286 202h89v18h-89z"/>
+    <path d="M373 251h46v242h-46z"/>
+    <path d="M365 242h62v17h-62z"/>
+    <path d="M610 190h76v303h-76z"/>
+    <path d="M598 180h100v20H598z"/>
+    <path d="M639 145h18v35h-18z"/>
+  </g>
+  <g fill="none" stroke="#0C9A91" stroke-width="12" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M164 431h-42v-91h125v42h77v-62h81"/>
+    <path d="M428 377h74v-72h108v82h81"/>
+    <path d="M517 436h107v-65"/>
+    <path d="M217 493v-37h70"/>
+  </g>
+  <g fill="#89E2CC" stroke="#10283F" stroke-width="7">
+    <circle cx="247" cy="382" r="14"/>
+    <circle cx="581" cy="387" r="14"/>
+    <circle cx="704" cy="419" r="14"/>
+  </g>
+  <g fill="#10283F" opacity=".88">
+    <rect x="80" y="543" width="800" height="5" rx="2.5"/>
+    <rect x="102" y="562" width="108" height="6" rx="3"/>
+    <rect x="228" y="562" width="52" height="6" rx="3"/>
+    <rect x="305" y="562" width="164" height="6" rx="3"/>
+  </g>
+</svg>

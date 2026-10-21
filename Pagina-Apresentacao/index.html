@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="img/" type="image/svg+xml">
+    <link rel="stylesheet" href="style.css">
+    
+
+    <title>Petravic</title>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="index.html" aria-label="Página inicial da Petravic">
+                <img src="img/logo-petravic-png.png" alt="Petravic" class="logo">
+            </a>
+            <nav aria-label="Navegação principal">
+                <ul class="nav-list">
+                    <li><a href="index.html" class="nav-inicio" aria-current="page">Início</a></li>
+                    <li><a href="sobre.html">Sobre</a></li>
+                    <li><a href="contato.html">Contato</a></li>
+                </ul>
+                <button class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>
+                <br>Prever. <br>Conectar. <br>
+                <span>Agir.</span>
+                <br> 
+            </h1>
+            <p>Automações que conectam e facilitam a sua empresa.</p>
+            <a href="#projetos" class="cta-button">VENHA SER PETRAVIC</a>
+            <img src="img/refinery.svg" alt="Ilustração de uma refinaria com tanques, tubulações e chaminés" class="hero-img">
+        </section>
+
+        <section class="features">
+            <h2>Como a Petravic funciona?</h2>
+            <p class="features-subtitle"></p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    
+                    <h3>Manutenção Preditiva</h3>
+                    <p>Analise de funcionamento de um maquinario.</p>
+                </div>
+
+                <div class="feature-card">
+                    
+                    <h3>Logística</h3>
+                    <p>Inteligencia Artificial analisa erros , faz um relatorio e envia para os setores responsaveis</p>
+                </div>
+
+                <div class="feature-card">
+                    
+                    <h3>Comunicação entre os setores</h3>
+                    <p>No final , um ser humano da o veredito final se pode ou nao ser resolvido.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="portfolio" id="projetos">
+            <h2>Nossos Trabalhos</h2>
+            <p class="portfolio-subtitle">Projetos que entregamos com excelência.</p>
+
+            <div class="portfolio-grid">
+
+                <div class="portfolio-card">
+                    <div class="portfolio-thumb">
+                        <img src="img/refinery.svg" alt="Ilustração de uma instalação industrial de petróleo e gás">
+                        <span class="portfolio-tag">Protótipo interativo</span>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Máquina Centrífuga</h3>
+                        <p>Protótipo interativo de monitoramento da máquina centrífuga API 610, com sensores e simulação de falhas.</p>
+                        <a href="../Protótipo-Máquina-Centrífuga-API610/inicio.html" class="portfolio-link">Ver projeto →</a>
+                    </div>
+                </div>
+
+                <div class="portfolio-card">
+                    <div class="portfolio-thumb">
+                        <img src="img/offshore-platform.svg" alt="Ilustração de uma plataforma de petróleo offshore">
+                        <span class="portfolio-tag">Protótipo interativo</span>
+                    </div>
+                    <div class="portfolio-info">
+                        <h3>Sistema de Monitoramento da Válvula Choke</h3>
+                        <p>Protótipo interativo que monitora sensores da válvula, simula falhas e gera relatórios para apoiar a análise e a manutenção.</p>
+                        <a href="../prototipo-valvula-choke/index.html" class="portfolio-link">Ver projeto →</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p class="footer-text">2026 &copy; Todos os direitos reservados a Ibmec JR Empresa A</p>
+    </footer>
+
+    <script>
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navList = document.querySelector('.nav-list');
+
+        menuToggle.addEventListener('click', () => {
+            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+            navList.classList.toggle('active');
+            menuToggle.setAttribute('aria-expanded', String(!isExpanded));
+        });
+    </script>
+
+</body>
+</html>
