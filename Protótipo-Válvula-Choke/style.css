@@ -1,184 +1,157 @@
-/* ================= style.css: a aparência ================= */
-  /* O atributo "hidden" esconde um elemento. */
-  [hidden] { display: none !important; }
+/* ================= style.css ================= */
+[hidden] { display: none !important; }
 
-  /* CORES DA MARCA PETRAVIC (usadas no arquivo todo):
-     Azul-madrugada #153049 | Verde mineral #1D908F | Menta gelo #A1EDDC | Areia mineral #D9CDB8 | Off-white #F5F4EF */
+body { background: linear-gradient(160deg, #10283F 0%, #10283F 100%) fixed; color: #10283F; font-family: Arial, sans-serif; padding: 0; margin: 0; }
+.pagina { max-width: 1000px; margin: 0 auto; padding: 16px; }
+.intro { color: #F5F4EF; }
 
-  body { background: linear-gradient(160deg, #153049 0%, #1D908F 100%) fixed; color: #153049; font-family: Arial, sans-serif; padding: 0; margin: 0; }
-  .pagina { max-width: 1000px; margin: 0 auto; padding: 16px; }   /* o espaço de 16px agora fica aqui, e não no body */
-  .intro { color: #F5F4EF; }
+.cartao { background: #F5F4EF; border-radius: 14px; padding: 14px; }
 
-  /* Cartão branco-gelo, usado em várias partes da página */
-  .cartao { background: #F5F4EF; border-radius: 14px; padding: 14px; }
+/* Cabeçalho */
+.cabecalho { position: relative; z-index: 2; padding: 0 50px; background: #F5F4EF; border-bottom: 1px solid rgba(16, 40, 63, 0.12); }
+.header-container { display: flex; align-items: center; justify-content: space-between; gap: 24px; width: 100%; min-height: 78px; margin: 0; }
+.brand { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.cabecalho img { display: block; width: 148px; height: 40px; max-width: 100%; object-fit: contain; }
+.cabecalho h1 { margin: 0; font-size: 17px; line-height: 1.1; letter-spacing: 0.5px; color: #153049; }
+.cabecalho nav { position: relative; }
+.nav-list { display: flex; align-items: center; gap: 24px; margin: 0; padding: 0; list-style: none; }
+.nav-list a { display: inline-block; padding: 9px 16px; color: #10283F; font-size: 0.92rem; font-weight: 600; text-decoration: none; border: 1px solid rgba(16, 40, 63, 0.28); border-radius: 8px; transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease; }
+.nav-list a:hover { color: #1D908F; border-color: #1D908F; }
+.menu-toggle { display: none; padding: 6px; color: #10283F; background: none; border: 0; font-size: 1.6rem; cursor: pointer; }
 
-  /* Cabeçalho (o "head" do site): faixa pequena no topo, com a logo e o nome do sistema um embaixo do outro.
-     A imagem da logo foi cortada rente ao desenho, para a faixa não ficar alta. */
-  .cabecalho { position: relative; z-index: 2; padding: 0 50px; background: #F5F4EF; border-bottom: 1px solid rgba(16, 40, 63, 0.12); }
-  .header-container { display: flex; align-items: center; justify-content: space-between; gap: 24px; width: 100%; min-height: 78px; margin: 0; }
-  .brand { display: flex; align-items: center; gap: 16px; min-width: 0; }
-  .cabecalho img { display: block; width: 148px; height: 40px; max-width: 100%; object-fit: contain; }
-  .cabecalho h1 { margin: 0; font-size: 17px; line-height: 1.1; letter-spacing: 0.5px; color: #153049; }
-  .cabecalho nav { position: relative; }
-  .nav-list { display: flex; align-items: center; gap: 24px; margin: 0; padding: 0; list-style: none; }
-  .nav-list a { display: inline-block; padding: 9px 16px; color: #10283F; font-size: 0.92rem; font-weight: 600; text-decoration: none; border: 1px solid rgba(16, 40, 63, 0.28); border-radius: 8px; transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease; }
-  .nav-list a:hover { color: #1D908F; border-color: #1D908F; }
-  .menu-toggle { display: none; padding: 6px; color: #10283F; background: none; border: 0; font-size: 1.6rem; cursor: pointer; }
-  .menu-toggle:focus-visible, .nav-list a:focus-visible { outline: 3px solid #1D908F; outline-offset: 4px; }
-  @media (max-width: 760px) {
-    .cabecalho { padding: 0 18px; }
-    .header-container { min-height: 68px; gap: 12px; }
-    .brand { gap: 10px; }
-    .cabecalho img { width: 120px; height: 36px; }
-    .cabecalho h1 { font-size: 14px; }
-  }
-  @media (max-width: 600px) {
-    .menu-toggle { display: block; }
-    .nav-list { position: absolute; top: calc(100% + 1px); right: -18px; left: -18px; display: none; align-items: stretch; gap: 0; padding: 10px 18px 18px; background: #F5F4EF; border-bottom: 1px solid rgba(16, 40, 63, 0.12); }
-    .nav-list.active { display: flex; flex-direction: column; }
-    .nav-list li { width: 100%; text-align: center; }
-    .nav-list a, .nav-list .nav-inicio { display: block; padding: 13px 16px; }
-  }
+@media (max-width: 760px) {
+  .cabecalho { padding: 0 18px; }
+  .header-container { min-height: 68px; gap: 12px; }
+  .brand { gap: 10px; }
+  .cabecalho img { width: 120px; height: 36px; }
+  .cabecalho h1 { font-size: 14px; }
+}
+@media (max-width: 600px) {
+  .menu-toggle { display: block; }
+  .nav-list { position: absolute; top: calc(100% + 1px); right: -18px; left: -18px; display: none; align-items: stretch; gap: 0; padding: 10px 18px 18px; background: #F5F4EF; border-bottom: 1px solid rgba(16, 40, 63, 0.12); }
+  .nav-list.active { display: flex; flex-direction: column; }
+  .nav-list li { width: 100%; text-align: center; }
+  .nav-list a, .nav-list .nav-inicio { display: block; padding: 13px 16px; }
+}
 
-  /* Botões (redondos, com sombra e que "sobem" quando o mouse passa) */
-  .botoes { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
-  button { font-family: inherit; font-size: 17px; font-weight: bold; padding: 10px 22px; border-radius: 999px; border: 2px solid #153049; background: #F5F4EF; color: #153049; cursor: pointer; box-shadow: 0 3px 0 rgba(0,0,0,0.25); transition: transform 0.15s, box-shadow 0.15s; }
-  button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
-  button:active:not(:disabled) { transform: translateY(1px); box-shadow: none; }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
-  button:focus-visible { outline: 3px solid #A1EDDC; outline-offset: 2px; }
-  button.principal { background: #1D908F; border-color: #A1EDDC; color: #FFFFFF; }   /* verde mineral */
-  button.destaque  { background: #c4d8eb; border-color: #000000; color: #000000; }   /* azul-madrugada */
-  button.grande { width: 100%; padding: 16px; font-size: 19px; }
+/* Botões Gerais */
+.botoes { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+button { font-family: inherit; font-size: 17px; font-weight: bold; padding: 10px 22px; border-radius: 999px; border: 2px solid #153049; background: #FFFFFF; color: #153049; cursor: pointer; box-shadow: 0 3px 0 rgba(0,0,0,0.25); transition: transform 0.15s, box-shadow 0.15s; }
+button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
+button:active:not(:disabled) { transform: translateY(1px); box-shadow: none; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+button:focus-visible { outline: 3px solid #10283F; outline-offset: 2px; }
+button.principal { background: #FFFFFF; border-color: #153049; color: #153049; }
+button.destaque  { background: #153049; border-color: #153049; color: #FFFFFF; }
 
-  /* Sub aba do "Forçar problema" */
-  .submenu { margin-bottom: 14px; }
-  .submenu h2 { margin: 0 0 8px 0; font-size: 18px; }
-  .submenu button { display: block; width: 100%; text-align: left; border-radius: 10px; font-size: 15px; margin-bottom: 8px; }
-  .tag { float: right; font-size: 12px; padding: 3px 8px; border-radius: 999px; }
-  .tag.aviso   { background: #F2B705; color: #153049; }
-  .tag.atencao { background: #D93025; color: #FFFFFF; }
+/* Botão Momento de Manutenção (Ajustado para o estilo retangular suave do print) */
+button.btn-manutencao {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #153049;
+  background-color: #F5F4EF;
+  border: 2px solid #153049;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
 
-  /* Divide a página em 2 colunas: conteúdo principal + lateral da manutenção */
-  .layout { display: grid; grid-template-columns: 1fr 290px; gap: 16px; align-items: start; }
-  .layout > main > * { margin-bottom: 14px; }
-  @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }   /* no celular, uma coluna só */
+/* Submenu */
+.submenu { margin-bottom: 14px; max-height: 70vh; overflow-y: auto; }
+.submenu h2 { margin: 0 0 8px 0; font-size: 18px; }
+.submenu button { display: block; width: 100%; text-align: left; border-radius: 10px; font-size: 15px; margin-bottom: 8px; }
+.tag { float: right; font-size: 12px; padding: 3px 8px; border-radius: 999px; font-weight: bold; }
+.tag.risco   { background: #F2B705; color: #153049; }
+.tag.critico { background: #D93025; color: #FFFFFF; }
 
-  /* Faixa de ESTADO: no lugar do semáforo, a cor da faixa muda conforme a situação */
-  .estado { border-radius: 14px; padding: 16px; background: #f1efea; color: #153049; }
-  .estado h2 { margin: 0; font-size: 30px; }
-  .estado p { margin: 4px 0 0 0; }
-  .estado.normal  { background: #1D908F; color: #FFFFFF; }
-  .estado.aviso   { background: #F2B705; color: #153049; }
-  .estado.atencao { background: #D93025; color: #FFFFFF; }
+/* Layout Grid */
+.layout { display: grid; grid-template-columns: 1fr 290px; gap: 16px; align-items: start; }
+.layout > main > * { margin-bottom: 14px; }
+@media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }
 
-  /* Relatório do sistema */
-  .relatorio { border: 4px solid #153049; }
-  .relatorio h2 { margin: 0 0 6px 0; }
-  .relatorio p { margin: 4px 0; }
-  .relatorio.aviso   { border-color: #F2B705; }
-  .relatorio.atencao { border-color: #D93025; }
+/* Faixas de Estado */
+.estado { border-radius: 14px; padding: 16px; background: #f1efea; color: #153049; }
+.estado h2 { margin: 0; font-size: 30px; }
+.estado p { margin: 4px 0 0 0; }
+.estado.normal  { background: #1D908F; color: #FFFFFF; }
+.estado.risco   { background: #F2B705; color: #153049; }
+.estado.critico { background: #D93025; color: #FFFFFF; }
 
-  /* Caixa da manutenção (lateral) */
-  .lateral h2 { margin: 0 0 10px 0; }
-  .manut-caixa { border-radius: 12px; padding: 12px; margin-top: 12px; background: #cecece; color: #153049; }
-  .manut-caixa h3 { margin: 0; font-size: 26px; }
-  .manut-caixa p { margin: 6px 0 0 0; }
-  .manut-caixa ul { padding-left: 20px; margin: 6px 0 0 0; }
-  .manut-caixa.seguro    { background: #17803F; color: #FFFFFF; }
-  .manut-caixa.naoseguro { background: #D93025; color: #FFFFFF; }
+/* Manutenção */
+.lateral h2 { margin: 0 0 10px 0; }
+.manut-caixa { border-radius: 12px; padding: 12px; margin-top: 12px; background: #cecece; color: #153049; }
+.manut-caixa h3 { margin: 0; font-size: 26px; }
+.manut-caixa p { margin: 6px 0 0 0; }
+.manut-caixa ul { padding-left: 20px; margin: 6px 0 0 0; }
+.manut-caixa.seguro    { background: #17803F; color: #FFFFFF; }
+.manut-caixa.naoseguro { background: #D93025; color: #FFFFFF; }
 
-  /* Área do desenho */
-  .cena { background: #e6f7f3; border-radius: 14px; padding: 8px; }
-  svg { display: block; width: 100%; height: auto; }
+/* Desenho da Válvula */
+.cena { background: #e6f7f3; border-radius: 14px; padding: 8px; }
+svg { display: block; width: 100%; height: auto; }
 
-  /* Cores das peças do desenho */
-  .chao { fill: #D9CDB8; }
-  .cano { fill: #153049; }
-  .corpo { fill: #1D908F; stroke: #153049; stroke-width: 3; }   /* verde mineral enquanto tudo vai bem */
-  .haste { stroke: #153049; stroke-width: 5; }
-  .fluxo { stroke: #A1EDDC; stroke-width: 4; stroke-dasharray: 10 8; }
+.chao { fill: #D9CDB8; }
+.corpo { fill: #2e6cb4; stroke: #153049; stroke-width: 2; }
+.interior { fill: #0f2536; }
+.zona { fill: none; stroke: none; }
+.porca { fill: #8a949e; stroke: #153049; stroke-width: 1.5; }
+.oring { fill: none; stroke: #0b0b0b; stroke-width: 3; }
+.oring-v { fill: #D93025; stroke: #153049; stroke-width: 1; }
+.marca { stroke: #153049; stroke-width: 1; }
+.c-amarelo, .c-roxo, .c-rosa, .c-verde, .c-laranja, .c-cinza, .c-vermelho, .c-azulclaro { stroke: #153049; stroke-width: 1.5; }
+.c-amarelo { fill: #F2D21B; } .c-roxo { fill: #9b3fa0; } .c-rosa { fill: #e58aa8; } .c-verde { fill: #3fae49; }
+.c-laranja { fill: #f08a24; } .c-cinza { fill: #8a949e; } .c-vermelho { fill: #d93025; } .c-azulclaro { fill: #5b9bd5; }
+.nome-peca { font-size: 11px; fill: #153049; opacity: 0.75; }
 
-  /* A ANIMAÇÃO: o fluido corre pelo cano e o volante gira.
-     "paused" = parada. Quando a válvula ganha a classe "ligada", passa a "running" = rodando. */
-  .fluxo   { animation: correr 0.8s linear infinite; animation-play-state: paused; }
-  .volante { transform-origin: 240px 34px; animation: girar 2s ease-in-out infinite alternate; animation-play-state: paused; }
-  #valvula.ligada .fluxo, #valvula.ligada .volante { animation-play-state: running; }
+.fluxo { stroke: #A1EDDC; stroke-width: 4; stroke-dasharray: 10 8; animation: correr 0.8s linear infinite; animation-play-state: paused; }
+.volante { transform-origin: 240px 34px; animation: girar 2s ease-in-out infinite alternate; animation-play-state: paused; }
+#valvula.ligada .fluxo, #valvula.ligada .volante { animation-play-state: running; }
 
-  @keyframes correr { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -18; } }
-  @keyframes girar  { from { transform: rotate(-12deg); } to { transform: rotate(12deg); } }
+@keyframes correr { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -18; } }
+@keyframes girar  { from { transform: rotate(-12deg); } to { transform: rotate(12deg); } }
 
-  /* Cartões dos sensores */
-  .sensores { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
-  .sensor { background: #F5F4EF; border: 3px solid #D9CDB8; border-radius: 10px; padding: 10px; }
-  .sensor strong { display: block; font-size: 28px; }
-  .sensor.ruim { border-color: #D93025; background: #FCE0DD; }  /* sensor com valor ruim */
+/* Sensores & Régua Normal */
+.sensores { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.sensor { background: #F5F4EF; border: 3px solid #D9CDB8; border-radius: 10px; padding: 10px; }
+.sensor strong { display: block; font-size: 26px; margin: 2px 0; }
+.sensor.ruim { border-color: #D93025; background: #FCE0DD; }
+.regua-normal { display: block; font-size: 11px; color: #555555; margin-top: 4px; border-top: 1px dashed #cccccc; padding-top: 2px; }
 
-  /* Para quem prefere menos movimento na tela */
-  @media (prefers-reduced-motion: reduce) { .fluxo, .volante { animation-duration: 6s; } }
+/* Destaques e Animações */
+#valvula { --cor-nivel: #F2B705; }
+#valvula.critico { --cor-nivel: #D93025; }
 
-  /* Só o botão "Momento de manutenção" fica com cantos mais retangulares */
-  button#botao-manutencao { border-radius: 4px; }
+[data-peca].destacar, [data-peca].destacar * { stroke: var(--cor-nivel) !important; stroke-width: 4 !important; }
+.zona.destacar { fill: var(--cor-nivel); fill-opacity: 0.3; }
+[data-peca].destacar { animation: pulsar 1s ease-in-out infinite; }
 
-  /* ENGRENAGENS DE FUNDO: ficam atrás de tudo, fixas na tela, sem atrapalhar cliques */
-  .engrenagens { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-  .engrenagens img { position: absolute; height: auto; }
-  .cabecalho, .pagina { position: relative; z-index: 1; }
+.alvo-anel { fill: none; stroke: var(--cor-nivel); stroke-width: 2.5; stroke-dasharray: 6 4; }
+.alvo-linha { stroke: var(--cor-nivel); stroke-width: 2; }
+.alvo-fundo { fill: #F5F4EF; stroke: var(--cor-nivel); stroke-width: 2; }
+.alvo-texto { font-size: 12px; font-weight: bold; fill: #153049; }
 
-  /* ================= VÁLVULA CHOKE DE LUVA EXTERNA (cores do catálogo DHV) ================= */
-  #valvula { --cor-nivel: #F2B705; }                 /* amarelo no AVISO */
-  #valvula.atencao { --cor-nivel: #D93025; }         /* vermelho na ATENÇÃO */
+.areia-g, .bolhas, .gotas { display: none; }
+#valvula.efeito-areia .areia-g, #valvula.efeito-bolhas .bolhas, #valvula.efeito-gotas .gotas { display: block; }
+.areia-g circle { fill: #D9CDB8; animation: areia 1.6s linear infinite; }
+.bolhas circle { fill: #A1EDDC; animation: bolha 1.4s ease-in-out infinite; }
+.gotas circle { fill: #0f2536; animation: gota 1s ease-in infinite; }
 
-  .corpo { fill: #2e6cb4; stroke: #153049; stroke-width: 2; }
-  .interior { fill: #0f2536; }
-  .zona { fill: none; stroke: none; }
-  .porca { fill: #8a949e; stroke: #153049; stroke-width: 1.5; }
-  .oring { fill: none; stroke: #0b0b0b; stroke-width: 3; }
-  .oring-v { fill: #D93025; stroke: #153049; stroke-width: 1; }
-  .marca { stroke: #153049; stroke-width: 1; }
-  .c-amarelo, .c-roxo, .c-rosa, .c-verde, .c-laranja, .c-cinza, .c-vermelho, .c-azulclaro { stroke: #153049; stroke-width: 1.5; }
-  .c-amarelo { fill: #F2D21B; } .c-roxo { fill: #9b3fa0; } .c-rosa { fill: #e58aa8; } .c-verde { fill: #3fae49; }
-  .c-laranja { fill: #f08a24; } .c-cinza { fill: #8a949e; } .c-vermelho { fill: #d93025; } .c-azulclaro { fill: #5b9bd5; }
-  .nome-peca { font-size: 11px; fill: #153049; opacity: 0.75; }
+@keyframes pulsar { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+@keyframes areia  { 0% { transform: translateX(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateX(-95px); opacity: 0; } }
+@keyframes bolha  { 0% { opacity: 0; transform: translateY(6px); } 50% { opacity: 0.9; } 100% { opacity: 0; transform: translateY(-14px); } }
+@keyframes gota   { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(18px); } }
 
-  /* Peça com defeito: contorno na cor do nível, pulsando */
-  [data-peca].destacar, [data-peca].destacar * { stroke: var(--cor-nivel) !important; stroke-width: 4 !important; }
-  .zona.destacar { fill: var(--cor-nivel); fill-opacity: 0.3; }
-  [data-peca].destacar { animation: pulsar 1s ease-in-out infinite; }
+.engrenagens { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.engrenagens img { position: absolute; height: auto; }
+.cabecalho, .pagina { position: relative; z-index: 1; }
 
-  /* Marcador: caixa tracejada em volta + linha + etiqueta */
-  .alvo-anel { fill: none; stroke: var(--cor-nivel); stroke-width: 2.5; stroke-dasharray: 6 4; }
-  .alvo-linha { stroke: var(--cor-nivel); stroke-width: 2; }
-  .alvo-fundo { fill: #F5F4EF; stroke: var(--cor-nivel); stroke-width: 2; }
-  .alvo-texto { font-size: 12px; font-weight: bold; fill: #153049; }
+.dicas h2 { margin: 0 0 4px 0; font-size: 20px; }
+.dicas h3 { margin: 10px 0 4px 0; font-size: 16px; }
+.dicas p { margin: 4px 0; line-height: 1.4; }
+.dicas ul { margin: 4px 0 0 0; padding-left: 20px; }
+.dicas li { margin-bottom: 3px; }
 
-  /* Efeitos que só aparecem em certos problemas */
-  .areia-g, .bolhas, .gotas { display: none; }
-  #valvula.efeito-areia .areia-g, #valvula.efeito-bolhas .bolhas, #valvula.efeito-gotas .gotas { display: block; }
-  .areia-g circle { fill: #D9CDB8; animation: areia 1.6s linear infinite; }
-  .areia-g circle:nth-child(2) { animation-delay: 0.3s; } .areia-g circle:nth-child(3) { animation-delay: 0.6s; }
-  .areia-g circle:nth-child(4) { animation-delay: 0.9s; } .areia-g circle:nth-child(5) { animation-delay: 1.2s; } .areia-g circle:nth-child(6) { animation-delay: 0.45s; }
-  .bolhas circle { fill: #A1EDDC; animation: bolha 1.4s ease-in-out infinite; }
-  .bolhas circle:nth-child(2) { animation-delay: 0.3s; } .bolhas circle:nth-child(3) { animation-delay: 0.6s; }
-  .bolhas circle:nth-child(4) { animation-delay: 0.9s; } .bolhas circle:nth-child(5) { animation-delay: 0.2s; }
-  .gotas circle { fill: #0f2536; animation: gota 1s ease-in infinite; }
-  .gotas circle:nth-child(2) { animation-delay: 0.3s; } .gotas circle:nth-child(3) { animation-delay: 0.6s; }
-
-  @keyframes pulsar { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
-  @keyframes areia  { 0% { transform: translateX(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateX(-95px); opacity: 0; } }
-  @keyframes bolha  { 0% { opacity: 0; transform: translateY(6px); } 50% { opacity: 0.9; } 100% { opacity: 0; transform: translateY(-14px); } }
-  @keyframes gota   { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(18px); } }
-  @media (prefers-reduced-motion: reduce) { [data-peca].destacar, .areia-g circle, .bolhas circle, .gotas circle { animation-duration: 5s; } }
-
-  .submenu { max-height: 70vh; overflow-y: auto; }
-
-  /* Caixa "Por que isso acontece" (aparece quando há problema) */
-  .dicas h2 { margin: 0 0 4px 0; font-size: 20px; }
-  .dicas h3 { margin: 10px 0 4px 0; font-size: 16px; }
-  .dicas p { margin: 4px 0; line-height: 1.4; }
-  .dicas ul { margin: 4px 0 0 0; padding-left: 20px; }
-  .dicas li { margin-bottom: 3px; }
-  .submenu { max-height: 70vh; overflow-y: auto; }
-
-  /* Setas que mostram o sentido do fluxo, no cano de entrada e no de saída */
-  .seta { fill: #A1EDDC; }
+.seta { fill: #A1EDDC; }

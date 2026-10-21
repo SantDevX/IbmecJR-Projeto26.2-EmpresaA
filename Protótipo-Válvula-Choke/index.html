@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Válvula Choke</title>
 <link rel="icon" href="../Pagina-Apresentacao/img/petravic-mark.svg" type="image/svg+xml">
-
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- Engrenagens decorativas do fundo (cada uma com posição, tamanho e giro diferentes) -->
+<!-- Engrenagens decorativas do fundo -->
 <div class="engrenagens" aria-hidden="true">
   <img src="engrenagem.png" alt="" style="left:2%;top:4%;width:120px;opacity:0.25;transform:rotate(15deg)">
   <img src="engrenagem.png" alt="" style="left:14%;top:30%;width:60px;opacity:0.18;transform:rotate(-25deg)">
@@ -30,34 +29,20 @@
   <img src="engrenagem.png" alt="" style="left:18%;top:50%;width:35px;opacity:0.22;transform:rotate(-70deg)">
 </div>
 
-<!--
-  COMO LER ESTE SITE
-  Agora o site está dividido em 3 arquivos, cada um com um trabalho:
-
-    index.html  (este arquivo)  diz O QUE existe na tela (botões, faixa de estado, desenho da válvula)
-    style.css                   diz COMO cada coisa aparece (cores, tamanhos, animação)
-    script.js                   diz O QUE ACONTECE quando alguém clica ou o tempo passa
-
-  O HTML liga os outros dois: o <link> no <head> chama o CSS e o <script> no final chama o JavaScript.
-  Os 4 arquivos (index.html, style.css, script.js e logo-petravic.png) precisam ficar na mesma pasta.
--->
-<!-- ================= index.html: a estrutura ================= -->
-<!-- CABEÇALHO: faixa escura no topo, com a logo da PETRAVIC no canto esquerdo e o nome do sistema embaixo.
-     A imagem da logo é o arquivo logo-petravic.png, na mesma pasta. -->
 <header class="cabecalho">
   <div class="header-container">
     <div class="brand">
-      <a class="logo-placa" href="../Pagina-Apresentacao/index.html" aria-label="Início da Petravic">
+      <div class="logo-placa">
         <img src="Petrovicsemfundo-logo.png" alt="Logo PETRAVIC">
-      </a>
+      </div>
       <h1>System Válvula Choke</h1>
     </div>
-    <nav aria-label="Navegação dos protótipos">
+    <nav aria-label="Navegação do sistema">
       <ul class="nav-list">
         <li><a class="nav-inicio" href="../Pagina-Apresentacao/index.html">Início</a></li>
         <li><a href="../Protótipo-Máquina-Centrífuga-API610/inicio.html">Máquina Centrífuga</a></li>
       </ul>
-      <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
+      <button class="menu-toggle" type="button" aria-label="Abrir menu de navegação" aria-expanded="false">&#9776;</button>
     </nav>
   </div>
 </header>
@@ -66,15 +51,12 @@
 
   <p class="intro">Clique em Iniciar. Depois de alguns segundos, um problema aleatório aparece. Ou escolha o problema em "Forçar problema". A peça com defeito fica destacada na válvula.</p>
 
-  <!-- Os botões. O "id" é o nome que o JavaScript usa para encontrar cada um. -->
   <div class="botoes">
     <button type="button" id="botao-iniciar" class="principal">Iniciar</button>
     <button type="button" id="botao-falha" class="destaque" disabled>Forçar problema</button>
     <button type="button" id="botao-reiniciar">Reiniciar</button>
   </div>
 
-  <!-- A sub aba do "Forçar problema". Começa escondida (hidden).
-       Cada botão chama dispararFalha(N), em que N é a posição do problema na lista "falhas" do JavaScript (começa em 0). -->
   <div id="submenu" class="cartao submenu" hidden>
     <h2>Qual problema você quer forçar?</h2>
     <div id="submenu-lista"></div>
@@ -85,32 +67,18 @@
 
     <!-- COLUNA PRINCIPAL -->
     <main>
-      <!-- A faixa de estado: muda de cor (NORMAL, AVISO ou ATENÇÃO) -->
+      <!-- Faixa de estado -->
       <div id="estado" class="estado">
         <h2 id="estado-nome">DESLIGADO</h2>
         <p id="estado-texto">Clique em Iniciar para começar o monitoramento.</p>
       </div>
 
-      <!-- O relatório começa escondido (hidden). O JavaScript mostra quando há problema. -->
-      <div id="relatorio" class="cartao relatorio" role="alert" hidden>
-        <h2>Relatório do sistema</h2>
-        <p><strong>Horário:</strong> <span id="rel-hora"></span></p>
-        <p><strong>Enviar para:</strong> <span id="rel-setor"></span></p>
-        <p><strong>Nível:</strong> <span id="rel-nivel"></span></p>
-        <p><strong>Problema:</strong> <span id="rel-nome"></span></p>
-        <p><strong>O que está acontecendo:</strong> <span id="rel-causa"></span></p>
-        <p><strong>Tempo estimado:</strong> <span id="rel-dias"></span></p>
-        <p><strong>O que fazer:</strong> <span id="rel-acao"></span></p>
-        <p><strong>Onde fica na válvula:</strong> <span id="rel-local"></span></p>
-        <p><strong>Base técnica:</strong> <span id="rel-fonte"></span></p>
-      </div>
-
-      <!-- O desenho da válvula choke. SVG é uma forma de desenhar com texto: retângulos, linhas, círculos. -->
+      <!-- Desenho da válvula choke -->
       <div class="cena">
         <svg id="valvula" viewBox="0 0 560 440" role="img" aria-label="Válvula choke de luva externa em corte, com o local do problema destacado">
           <rect class="chao" x="0" y="422" width="560" height="18"/>
 
-          <!-- Corpo (1): angular, entrada pela direita e saída para baixo, como no catálogo DHV -->
+          <!-- Corpo -->
           <g data-peca="1">
             <rect class="corpo" x="170" y="195" width="140" height="145" rx="6"/>
             <rect class="corpo" x="298" y="230" width="90" height="60"/>
@@ -121,7 +89,7 @@
           <rect class="interior" x="185" y="205" width="110" height="127"/>
           <rect class="interior" x="293" y="238" width="92" height="44"/>
           <rect class="interior" x="213" y="330" width="54" height="58"/>
-          <!-- Cano de entrada (fora da válvula, à direita) e cano de saída (embaixo), para o fluxo aparecer antes e depois da choke -->
+          
           <rect class="corpo" x="394" y="232" width="166" height="56"/>
           <rect class="interior" x="385" y="238" width="175" height="44"/>
           <rect class="corpo" x="205" y="388" width="70" height="34"/>
@@ -132,18 +100,18 @@
           <polygon class="seta" points="520,252 504,260 520,268"/>
           <polygon class="seta" points="232,404 240,418 248,404"/>
 
-          <!-- Castelo (2), prisioneiros e porcas (28-29), vedação corpo/castelo (27) -->
+          <!-- Castelo, prisioneiros e porcas -->
           <g data-peca="2"><rect class="corpo" x="187" y="140" width="106" height="56"/><rect class="corpo" x="175" y="186" width="130" height="12" rx="2"/></g>
           <g data-peca="28 29"><rect class="porca" x="177" y="174" width="14" height="12"/><rect class="porca" x="289" y="174" width="14" height="12"/></g>
           <g data-peca="27"><circle class="oring" cx="190" cy="201" r="3.5"/><circle class="oring" cx="290" cy="201" r="3.5"/></g>
 
-          <!-- Gaxeta e vedação da haste: preme-gaxeta (16), anel de gaxeta (14), anel de apoio (15), vedação da haste (19) -->
+          <!-- Gaxeta e vedações -->
           <rect class="c-cinza" data-peca="16" x="222" y="144" width="36" height="8"/>
           <rect class="c-verde" data-peca="14" x="224" y="152" width="32" height="8"/>
           <rect class="c-vermelho" data-peca="15" x="224" y="160" width="32" height="8"/>
           <rect class="c-laranja" data-peca="19" x="224" y="168" width="32" height="8"/>
 
-          <!-- Yoke (9), porca da haste (13), parafuso de trava (34), lubrificador (32), tampa indicadora (10), protetor da haste (11), volante (12) -->
+          <!-- Yoke e partes mecânicas superiores -->
           <g data-peca="9"><rect class="corpo" x="212" y="100" width="56" height="42"/></g>
           <rect class="c-rosa" data-peca="13" x="226" y="106" width="28" height="22"/>
           <g data-peca="34"><rect class="c-cinza" x="196" y="114" width="18" height="8"/><rect class="c-cinza" x="190" y="109" width="8" height="18" rx="3"/></g>
@@ -156,11 +124,11 @@
           <rect class="c-azulclaro" data-peca="11" x="232" y="40" width="16" height="14"/>
           <g class="volante" data-peca="12"><rect x="150" y="28" width="180" height="12" rx="6" fill="#3b4350"/><rect x="234" y="24" width="12" height="20" rx="3" fill="#3b4350"/></g>
 
-          <!-- Dreno (33), na lateral do corpo -->
+          <!-- Dreno -->
           <rect class="interior" x="170" y="253" width="16" height="4"/>
           <g data-peca="33"><rect class="c-cinza" x="152" y="250" width="18" height="10"/><rect class="c-cinza" x="147" y="247" width="6" height="16"/></g>
 
-          <!-- Dentro da câmara: luva externa (8), vedação da luva (20), gaiola (6), bucha (7), sede (3), inserto da sede (4), haste (5) -->
+          <!-- Componentes internos -->
           <g data-peca="8"><rect class="c-amarelo" x="198" y="205" width="84" height="12"/><rect class="c-amarelo" x="198" y="205" width="14" height="45"/><rect class="c-amarelo" x="268" y="205" width="14" height="45"/></g>
           <g data-peca="20"><circle class="oring-v" cx="197" cy="216" r="2.5"/><circle class="oring-v" cx="283" cy="216" r="2.5"/></g>
           <g data-peca="6"><rect class="c-rosa" x="214" y="217" width="12" height="33"/><rect class="c-rosa" x="214" y="270" width="12" height="50"/><rect class="c-rosa" x="254" y="217" width="12" height="33"/><rect class="c-rosa" x="254" y="270" width="12" height="50"/></g>
@@ -169,7 +137,7 @@
           <g data-peca="4"><rect class="c-laranja" x="228" y="322" width="6" height="12"/><rect class="c-laranja" x="246" y="322" width="6" height="12"/></g>
           <rect class="c-cinza" data-peca="5" x="235" y="176" width="10" height="56"/>
 
-          <!-- Efeitos: areia entrando, bolhas de cavitação, gotas de vazamento (só aparecem nos problemas certos) -->
+          <!-- Efeitos visuais -->
           <g class="areia-g"><circle cx="372" cy="250" r="2.5"/><circle cx="380" cy="262" r="2"/><circle cx="366" cy="270" r="2.5"/><circle cx="376" cy="256" r="2"/><circle cx="384" cy="272" r="2.5"/><circle cx="370" cy="244" r="2"/></g>
           <g class="bolhas"><circle cx="236" cy="296" r="3"/><circle cx="246" cy="304" r="2.5"/><circle cx="240" cy="288" r="3.5"/><circle cx="232" cy="310" r="2.5"/><circle cx="248" cy="292" r="2"/></g>
           <g id="gotas" class="gotas"><circle cx="0" cy="4" r="3"/><circle cx="7" cy="9" r="2.5"/><circle cx="-7" cy="12" r="2.5"/></g>
@@ -177,7 +145,6 @@
           <text class="nome-peca" x="402" y="226">Entrada (inlet)</text>
           <text class="nome-peca" x="284" y="410">Saída (outlet)</text>
 
-          <!-- MARCADOR DO PROBLEMA: o JavaScript desenha em volta das peças com defeito -->
           <g id="alvo" hidden>
             <line id="alvo-linha" class="alvo-linha"/>
             <rect id="alvo-anel" class="alvo-anel" rx="5"/>
@@ -195,23 +162,55 @@
         <ul id="dicas-causas"></ul>
       </section>
 
-      <!-- Os 8 sensores. Cada um mostra um número que o JavaScript atualiza. -->
+      <!-- Cartões dos Sensores com Régua Indicativa -->
       <div class="sensores">
-        <div class="sensor"><span>Pressão entrada (psi)</span><strong id="pressaoEntrada">--</strong></div>
-        <div class="sensor"><span>Pressão saída (psi)</span><strong id="pressaoSaida">--</strong></div>
-        <div class="sensor"><span>Vazão (gpm)</span><strong id="vazao">--</strong></div>
-        <div class="sensor"><span>Desvio do Cv (%)</span><strong id="desvio">--</strong></div>
-        <div class="sensor"><span>Nível de areia (0 a 10)</span><strong id="areia">--</strong></div>
-        <div class="sensor"><span>Vibração (mm/s)</span><strong id="vibracao">--</strong></div>
-        <div class="sensor"><span>Abertura (bean, 64avos de pol.)</span><strong id="abertura">--</strong></div>
-        <div class="sensor"><span>Temperatura (°C)</span><strong id="temperatura">--</strong></div>
+        <div class="sensor">
+          <span>Pressão entrada (psi)</span>
+          <strong id="pressaoEntrada">--</strong>
+          <small class="regua-normal">Normal: 2900 - 3200</small>
+        </div>
+        <div class="sensor">
+          <span>Pressão saída (psi)</span>
+          <strong id="pressaoSaida">--</strong>
+          <small class="regua-normal">Normal: 700 - 900</small>
+        </div>
+        <div class="sensor">
+          <span>Vazão (gpm)</span>
+          <strong id="vazao">--</strong>
+          <small class="regua-normal">Normal: 130 - 180</small>
+        </div>
+        <div class="sensor">
+          <span>Desvio do Cv (%)</span>
+          <strong id="desvio">--</strong>
+          <small class="regua-normal">Normal: -5.0 a 5.0</small>
+        </div>
+        <div class="sensor">
+          <span>Nível de areia (0 a 10)</span>
+          <strong id="areia">--</strong>
+          <small class="regua-normal">Normal: 0 a 3</small>
+        </div>
+        <div class="sensor">
+          <span>Vibração (mm/s)</span>
+          <strong id="vibracao">--</strong>
+          <small class="regua-normal">Normal: 0.0 a 3.5</small>
+        </div>
+        <div class="sensor">
+          <span>Abertura (bean, 64avos)</span>
+          <strong id="abertura">--</strong>
+          <small class="regua-normal">Normal: 50 a 75</small>
+        </div>
+        <div class="sensor">
+          <span>Temperatura (°C)</span>
+          <strong id="temperatura">--</strong>
+          <small class="regua-normal">Normal: 10 a 80</small>
+        </div>
       </div>
     </main>
 
-    <!-- COLUNA LATERAL: verificação de manutenção -->
+    <!-- COLUNA LATERAL: Manutenção -->
     <aside class="cartao lateral">
       <h2>Manutenção</h2>
-      <button type="button" id="botao-manutencao" class="destaque grande" disabled>Momento de manutenção</button>
+      <button type="button" id="botao-manutencao" class="btn-manutencao grande" disabled>Momento de manutenção</button>
       <div id="manut-caixa" class="manut-caixa">
         <h3 id="manut-nome">AGUARDANDO</h3>
         <p id="manut-texto">Inicie o sistema e clique no botão acima para saber se está seguro fazer a manutenção.</p>
@@ -222,7 +221,6 @@
   </div>
 </div>
 
-<!-- O JavaScript fica no arquivo script.js (precisa vir no final, depois de todo o HTML) -->
 <script src="script.js"></script>
 <script>
   const menuToggle = document.querySelector('.menu-toggle');
@@ -234,6 +232,5 @@
     menuToggle.setAttribute('aria-expanded', String(!isExpanded));
   });
 </script>
-
 </body>
 </html>
