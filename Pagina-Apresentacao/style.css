@@ -56,7 +56,7 @@ button:focus-visible {
 header {
     position: relative;
     z-index: 2;
-    padding: 0 32px;
+    padding: 0 50px;
     background: var(--color-off-white);
     border-bottom: 1px solid rgba(16, 40, 63, 0.12);
 }
@@ -65,9 +65,9 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: min(100%, var(--content-width));
+    width: 100%;
     height: 78px;
-    margin: 0 auto;
+    margin: 0;
 }
 
 .logo {
@@ -93,24 +93,18 @@ nav {
 }
 
 .nav-list a {
+    padding: 9px 16px;
     color: var(--color-navy);
     font-size: 0.92rem;
     font-weight: 600;
     text-decoration: none;
+    border: 1px solid rgba(16, 40, 63, 0.28);
+    border-radius: 8px;
     transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
 }
 
 .nav-list a:hover {
     color: var(--color-mineral-hover);
-}
-
-.nav-list a[aria-current="page"] {
-    padding: 9px 16px;
-    border: 1px solid rgba(16, 40, 63, 0.28);
-    border-radius: 8px;
-}
-
-.nav-list a[aria-current="page"]:hover {
     border-color: var(--color-mineral);
 }
 
@@ -541,7 +535,7 @@ footer {
 
 @media (max-width: 768px) {
     header {
-        padding: 0 24px;
+        padding: 0 18px;
     }
 
     .hero {
@@ -615,7 +609,6 @@ footer {
     .nav-list .nav-inicio {
         display: block;
         padding: 13px 16px;
-        border: 0;
     }
 
     .nav-list .nav-entrar {
