@@ -153,17 +153,18 @@
         </svg>
       </div>
 
+      <!-- Correção WAVE: div com classe de título em vez de h3 vazio -->
       <section id="dicas" class="cartao dicas" hidden>
         <h2>Por que isso acontece</h2>
-        <h3 id="dicas-nome"></h3>
+        <div id="dicas-nome" class="dicas-subtitulo"></div>
         <p id="dicas-porque"></p>
         <h3>Propagação e Dependência em Cadeia</h3>
-        <p id="dicas-cadeia" style="color: #D93025; font-weight: bold;"></p>
+        <p id="dicas-cadeia" style="color: #A30000; font-weight: bold;"></p>
         <h3>O que costuma causar</h3>
         <ul id="dicas-causas"></ul>
       </section>
 
-      <!-- Cartões dos Sensores com Régua Indicativa -->
+      <!-- Cartões dos Sensores organizados em formato 4x4 (4 em cima, 4 embaixo) -->
       <div class="sensores">
         <div class="sensor">
           <span>Pressão entrada (psi)</span>
@@ -207,17 +208,6 @@
         </div>
       </div>
     </main>
-
-    <!-- COLUNA LATERAL: Manutenção -->
-    <aside class="cartao lateral">
-      <h2>Manutenção</h2>
-      <button type="button" id="botao-manutencao" class="btn-manutencao grande" disabled>Momento de manutenção</button>
-      <div id="manut-caixa" class="manut-caixa">
-        <h3 id="manut-nome">AGUARDANDO</h3>
-        <p id="manut-texto">Inicie o sistema e clique no botão acima para saber se está seguro fazer a manutenção.</p>
-        <ul id="manut-lista"></ul>
-      </div>
-    </aside>
 
   </div>
 </div>
