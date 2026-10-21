@@ -49,7 +49,7 @@
 
 <div class="pagina">
 
-  <p class="intro">Clique em Iniciar. Depois de alguns segundos, um problema aleatório aparece. Ou escolha o problema em "Forçar problema". A peça com defeito fica destacada na válvula.</p>
+  <p class="intro">Clique em Iniciar. Depois de alguns segundos, um problema aleatório aparece. Ou escolha o problema em "Forçar problema". A peça com defeito e suas dependências afetadas ficam destacadas na válvula.</p>
 
   <div class="botoes">
     <button type="button" id="botao-iniciar" class="principal">Iniciar</button>
@@ -67,7 +67,6 @@
 
     <!-- COLUNA PRINCIPAL -->
     <main>
-      <!-- Faixa de estado -->
       <div id="estado" class="estado">
         <h2 id="estado-nome">DESLIGADO</h2>
         <p id="estado-texto">Clique em Iniciar para começar o monitoramento.</p>
@@ -111,7 +110,7 @@
           <rect class="c-vermelho" data-peca="15" x="224" y="160" width="32" height="8"/>
           <rect class="c-laranja" data-peca="19" x="224" y="168" width="32" height="8"/>
 
-          <!-- Yoke e partes mecânicas superiores -->
+          <!-- Yoke e partes superiores -->
           <g data-peca="9"><rect class="corpo" x="212" y="100" width="56" height="42"/></g>
           <rect class="c-rosa" data-peca="13" x="226" y="106" width="28" height="22"/>
           <g data-peca="34"><rect class="c-cinza" x="196" y="114" width="18" height="8"/><rect class="c-cinza" x="190" y="109" width="8" height="18" rx="3"/></g>
@@ -158,6 +157,8 @@
         <h2>Por que isso acontece</h2>
         <h3 id="dicas-nome"></h3>
         <p id="dicas-porque"></p>
+        <h3>Propagação e Dependência em Cadeia</h3>
+        <p id="dicas-cadeia" style="color: #D93025; font-weight: bold;"></p>
         <h3>O que costuma causar</h3>
         <ul id="dicas-causas"></ul>
       </section>

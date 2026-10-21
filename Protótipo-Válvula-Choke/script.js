@@ -45,135 +45,166 @@ var falhas = [
   // RISCO (AMARELO)
   { nome: "Desgaste começando no trim", nivel: "risco", setor: "Manutenção e Compras",
     sensores: { desvio: 7, areia: 4, vazao: 168 }, dias: 16,
-    causa: "A areia começa a desgastar a gaiola e a bucha (o trim). O orifício está um pouco maior que o normal.",
+    causa: "A areia começa a desgastar a gaiola e a bucha (o trim).",
+    cadeia: "A perda de integridade na gaiola (Peça 6) afeta diretamente a bucha deslizante (Peça 7) e desregula o controle de vazão.",
+    dependentes: [7, 8],
     acao: "Agendar inspeção na próxima parada planejada e comprar a peça de reposição.",
     pendencias: [],
-    foco: { pecas: [6, 7], efeito: "areia", rotulo: "Gaiola e bucha do trim" },
-    fonte: "McIlvaine slides 9 a 11 (Pentair)." },
+    foco: { pecas: [6, 7, 8], efeito: "areia", rotulo: "Gaiola, bucha e luva (Trim afetado em cascata)" },
+    fonte: "McIlvaine slides 9 a 11." },
 
   { nome: "Choke cada vez mais fechada (círculo vicioso)", nivel: "risco", setor: "Operação, Manutenção e Financeiro",
     sensores: { abertura: 42, desvio: 12, vibracao: 5 }, dias: 10,
-    causa: "O trim erodiu e perdeu controle. Para manter a vazão, o operador aproxima a luva do assento, acelerando erosão e vibração.",
+    causa: "O trim erodiu e perdeu controle, exigindo maior fechamento da luva.",
+    cadeia: "O fechamento excessivo da Luva Externa (Peça 8) restringe o escoamento, forçando a Bucha (Peça 7) e elevando a vibração mecânica na Haste (Peça 5).",
+    dependentes: [5, 7, 8],
     acao: "Trocar o trim em vez de continuar fechando a válvula.",
     pendencias: [],
-    foco: { pecas: [7, 8], efeito: "", rotulo: "Luva e bucha quase fechadas" },
-    fonte: "McIlvaine slide 33 (CCI)." },
+    foco: { pecas: [5, 7, 8], efeito: "", rotulo: "Luva, bucha e haste sob esforço excessivo" },
+    fonte: "McIlvaine slide 33." },
 
   { nome: "Vibração por cavitação", nivel: "risco", setor: "Manutenção",
     sensores: { vibracao: 7, pressaoSaida: 500 }, dias: 30,
-    causa: "A queda de pressão é alta e formam-se bolhas no fluido logo depois da restrição, que causam vibração.",
-    acao: "Reduzir a queda de pressão e acompanhar a vibração nos próximos dias.",
+    causa: "A queda de pressão abrupta forma bolhas que estouram logo após a restrição.",
+    cadeia: "O impacto das bolhas de cavitação corrói a Gaiola (Peça 6) e transmite ondas de choque para o Corpo principal (Peça 1).",
+    dependentes: [1, 6],
+    acao: "Reduzir a queda de pressão e acompanhar a vibração.",
     pendencias: [],
-    foco: { pecas: [6, 7], efeito: "bolhas", rotulo: "Cavitação depois dos furos da gaiola" },
+    foco: { pecas: [1, 6, 7], efeito: "bolhas", rotulo: "Cavitação propagando do Trim para o Corpo" },
     fonte: "McIlvaine slides 20, 24 e 51." },
 
   { nome: "Corrosão do corpo (CO2 úmido ou H2S)", nivel: "risco", setor: "Manutenção e Compras",
     sensores: { areia: 4, desvio: 3 }, dias: 45,
-    causa: "O material do corpo e do castelo não é o adequado para CO2 úmido ou H2S.",
-    acao: "Conferir o tipo de serviço do poço e escolher o material correto na próxima troca.",
+    causa: "O material do corpo e do castelo sofre ataque químico por CO2 úmido ou H2S.",
+    cadeia: "A corrosão estrutural do Corpo (Peça 1) compromete a fixação do Castelo (Peça 2) e enfraquece os Prisioneiros (Peças 28-29).",
+    dependentes: [2, 28, 29],
+    acao: "Conferir o tipo de serviço do poço e escolher material adequado.",
     pendencias: [],
-    foco: { pecas: [1, 2], efeito: "", rotulo: "Corpo e castelo: material errado" },
+    foco: { pecas: [1, 2, 28, 29], efeito: "", rotulo: "Corpo, castelo e prisioneiros corroídos" },
     fonte: "McIlvaine slides 25, 46 e 51." },
 
   { nome: "Entupimento dos furos da gaiola (areia e incrustação)", nivel: "risco", setor: "Operação e Manutenção",
     sensores: { vazao: 105, desvio: -28, pressaoEntrada: 3300, pressaoSaida: 600, areia: 6 }, dias: 5,
-    causa: "Areia e incrustações bloqueiam os furos da gaiola. A vazão cai e o desvio fica negativo.",
+    causa: "Areia e incrustações bloqueiam os furos de passagem.",
+    cadeia: "O bloqueio na Gaiola (Peça 6) impede o fluxo normal, forçando o aumento desproporcional da Pressão de Entrada e travando a Luva (Peça 8).",
+    dependentes: [6, 8, "Zentrada"],
     acao: "Programar a limpeza ou troca da gaiola.",
     pendencias: [],
-    foco: { pecas: [6, 7], efeito: "areia", rotulo: "Furos da gaiola bloqueados" },
+    foco: { pecas: [6, 8, "Zentrada"], efeito: "areia", rotulo: "Gaiola entupida bloqueando a entrada" },
     fonte: "McIlvaine slides 9, 25 e 49." },
 
   { nome: "Congelamento (gelo) na choke", nivel: "risco", setor: "Operação e Manutenção",
     sensores: { temperatura: -8, vazao: 95, pressaoSaida: 1100 }, dias: 2,
-    causa: "A queda de pressão resfria o fluido a ponto de formar gelo na saída.",
+    causa: "A expansão rápida do gás resfria o fluido a ponto de formar gelo.",
+    cadeia: "O congelamento na Saída (Zsaida) bloqueia os dutos e paralisa a operação na Sede (Peça 3) e inserto.",
+    dependentes: [3, "Zsaida"],
     acao: "Reduzir a queda de pressão e aquecer a linha.",
     pendencias: [],
-    foco: { pecas: [6, "Zsaida"], efeito: "", rotulo: "Saída e furos da gaiola: gelo" },
+    foco: { pecas: [3, "Zsaida"], efeito: "", rotulo: "Formação de gelo na sede e saída" },
     fonte: "McIlvaine slides 4, 9 e 24." },
 
   { nome: "Engripamento (galling) da haste e da luva", nivel: "risco", setor: "Manutenção e Compras",
     sensores: { vibracao: 4, desvio: 2 }, dias: 20,
-    causa: "Peças metálicas deslizando sem a devida proteção de material travam entre si.",
-    acao: "Inspecionar a haste e usar revestimentos contra galling.",
+    causa: "Peças metálicas em contato direto sem proteção travam entre si.",
+    cadeia: "O travamento da Haste (Peça 5) impede o acionamento do Volante (Peça 12) e imobiliza a Luva Externa (Peça 8).",
+    dependentes: [5, 8, 12],
+    acao: "Inspecionar a haste e usar revestimentos adequados.",
     pendencias: [],
-    foco: { pecas: [5, 8], efeito: "", rotulo: "Haste e luva arranhando" },
+    foco: { pecas: [5, 8, 12], efeito: "", rotulo: "Haste, luva e volante travados" },
     fonte: "McIlvaine slides 47 e 51." },
 
   { nome: "Carboneto de tungstênio trincado (vibração)", nivel: "risco", setor: "Manutenção e Segurança",
     sensores: { vibracao: 9, desvio: 18, areia: 3 }, dias: null,
-    causa: "A vibração da cavitação quebrou o carboneto de tungstênio frágil.",
+    causa: "A vibração extrema quebrou o inserto de carboneto de tungstênio.",
+    cadeia: "A quebra no material da Bucha (Peça 7) solta fragmentos que danificam imediatamente a Gaiola (Peça 6) e a Sede (Peça 3).",
+    dependentes: [3, 6, 7],
     acao: "Planejar a troca do trim e reduzir a queda de pressão.",
     pendencias: pendIsolar,
-    foco: { pecas: [6, 7], efeito: "bolhas", rotulo: "Carboneto trincado: gaiola e bucha" },
-    fonte: "McIlvaine slide 51; catálogo DHV p. 5." },
+    foco: { pecas: [3, 6, 7], efeito: "bolhas", rotulo: "Trim estilhaçado afetando sede e gaiola" },
+    fonte: "McIlvaine slide 51." },
 
   // CRÍTICO (VERMELHO)
   { nome: "Erosão grave do trim por areia", nivel: "critico", setor: "Manutenção, Compras, Financeiro e Segurança",
     sensores: { desvio: 22, areia: 8, vazao: 192 }, dias: null,
-    causa: "A areia corroeu a gaiola, bucha e luva. O desvio do Cv superou o limite crítico.",
+    causa: "A areia corroeu profundamente os componentes internos.",
+    cadeia: "O colapso da Gaiola (Peça 6) transmite fluxo descontrolado para a Sede (Peça 3) e corrói a Luva (Peça 8).",
+    dependentes: [3, 6, 8],
     acao: "Planejar a troca urgente do trim e despressurizar a linha.",
     pendencias: pendIsolar,
-    foco: { pecas: [6], efeito: "areia", rotulo: "Trim erodido: gaiola, bucha e luva" },
+    foco: { pecas: [3, 6, 8], efeito: "areia", rotulo: "Colapso total do trim em cadeia" },
     fonte: "McIlvaine slides 9, 11 e 33." },
 
   { nome: "Queda de pressão excessiva (gás expandindo)", nivel: "critico", setor: "Operação, Manutenção e Segurança",
     sensores: { pressaoEntrada: 5000, pressaoSaida: 200, vazao: 210, vibracao: 8 }, dias: null,
-    causa: "A queda extrema de pressão acelera o gás em até 340x. Isso sobrecarrega a gaiola por cavitação e gera vibração intensa no corpo da máquina.",
-    afetaComponentes: "A alta pressão gerou cavitação severa na Gaiola com Furos e Vibração no Corpo Principal.",
-    acao: "Reduzir a queda de pressão. Dividir a queda em etapas com chokes em série.",
+    causa: "A expansão violenta do gás multiplica a velocidade do fluido.",
+    cadeia: "A alta velocidade afeta diretamente o Corpo (Peça 1), a Zona de Saída (Zsaida) e provoca cavitação severa na Gaiola (Peça 6).",
+    dependentes: [1, 6, "Zsaida"],
+    acao: "Reduzir a queda de pressão e dividir em chokes em série.",
     pendencias: pendIsolar,
-    foco: { pecas: [1, 6, 7, "Zsaida"], efeito: "bolhas", rotulo: "Gaiola e Corpo: Pressão gerou cavitação e vibração" },
+    foco: { pecas: [1, 6, "Zsaida"], efeito: "bolhas", rotulo: "Corpo, gaiola e saída sob sobrecarga gasosa" },
     fonte: "McIlvaine slide 9." },
 
   { nome: "Erosão do corpo na saída (risco de furo)", nivel: "critico", setor: "Segurança e Operação",
     sensores: { vibracao: 6, areia: 6, vazao: 185 }, dias: null,
-    causa: "Fluido com areia em alta velocidade desgasta a parede de aço da saída.",
+    causa: "O jato de areia em alta velocidade abriu cavidades na parede da saída.",
+    cadeia: "O afinamento na Zona de Saída (Zsaida) compromete a estrutura mecânica do Corpo (Peça 1) e gera risco iminente de vazamento externo.",
+    dependentes: [1, "Zsaida"],
     acao: "Isolar a área, avisar a segurança e interromper a linha.",
     pendencias: pendFuro,
-    foco: { pecas: [1, "Zsaida"], efeito: "areia", rotulo: "Corpo e saída: parede afinando" },
+    foco: { pecas: [1, "Zsaida"], efeito: "areia", rotulo: "Parede do corpo e saída comprometidas" },
     fonte: "McIlvaine slides 24 e 51." },
 
   { nome: "Vazamento nos O-rings (descompressão explosiva)", nivel: "critico", setor: "Segurança e Manutenção",
     sensores: { pressaoEntrada: 2750, vazao: 150 }, dias: null,
-    causa: "O-rings deformaram/rasgaram por descompressão explosiva e o fluido vaza.",
+    causa: "Descompressão rápida rasgou os anéis de vedação sob alta pressão.",
+    cadeia: "A falha nas Vedações da Luva (Peça 20) e do Corpo/Castelo (Peça 27) permite fuga de gás para o exterior do Castelo (Peça 2).",
+    dependentes: [2, 20, 27],
     acao: "Isolar a área, evacuar se necessário e trocar as vedações.",
     pendencias: pendFuro,
-    foco: { pecas: [27, 20], efeito: "gotas", rotulo: "Vedações do corpo/castelo e da luva" },
+    foco: { pecas: [2, 20, 27], efeito: "gotas", rotulo: "Vedações e castelo com vazamento em cadeia" },
     fonte: "McIlvaine slide 51." },
 
   { nome: "Vazamento pela haste (gaxeta e vedação)", nivel: "critico", setor: "Segurança e Manutenção",
     sensores: { pressaoEntrada: 2850 }, dias: null,
-    causa: "O fluido escapa pela região da haste por desgaste da gaxeta.",
-    acao: "Isolar a área e substituir a gaxeta e vedação.",
+    causa: "Desgaste severo na gaxeta e anéis da haste.",
+    cadeia: "A perda de vedação na Haste (Peça 5) afeta o Preme-gaxeta (Peça 16) e a Tampa Indicadora (Peça 10), expelindo fluido.",
+    dependentes: [5, 10, 16],
+    acao: "Isolar a área e substituir o conjunto de gaxetas.",
     pendencias: pendFuro,
-    foco: { pecas: [14, 15], efeito: "gotas", rotulo: "Gaxeta e vedação da haste" },
-    fonte: "McIlvaine slide 51; catálogo DHV p. 6." },
+    foco: { pecas: [5, 10, 16], efeito: "gotas", rotulo: "Haste, gaxeta e tampa com fuga de fluido" },
+    fonte: "McIlvaine slide 51." },
 
   { nome: "A choke não veda na sede", nivel: "critico", setor: "Segurança, Operação e Manutenção",
     sensores: { vazao: 60, pressaoSaida: 1300, desvio: 9 }, dias: null,
-    causa: "Mesmo fechada, o fluido ultrapassa a sede e a linha permanece pressurizada.",
-    acao: "Isolar via válvula de bloqueio, despressurizar e trocar a sede.",
+    causa: "Danos na superfície de contato impedem o fechamento estanque.",
+    cadeia: "A falha na Sede (Peça 3) e no Inserto (Peça 4) deixa passar fluxo residual, mantendo a Zona de Saída (Zsaida) pressurizada indevidamente.",
+    dependentes: [3, 4, "Zsaida"],
+    acao: "Isolar via válvula de bloqueio e trocar a sede.",
     pendencias: pendIsolar,
-    foco: { pecas: [3, 4], efeito: "", rotulo: "Sede e inserto sem vedar" },
+    foco: { pecas: [3, 4, "Zsaida"], efeito: "", rotulo: "Sede, inserto e saída sem estanqueidade" },
     fonte: "Catálogo DHV p. 5." },
 
   { nome: "Colapso do trim e sobrepressão depois da choke", nivel: "critico", setor: "Manutenção, Compras, Financeiro e Segurança",
     sensores: { pressaoSaida: 2400, desvio: 35, vazao: 230 }, dias: null,
-    causa: "O trim cedeu totalmente e a pressão do poço avança direto aos equipamentos de baixa pressão.",
+    causa: "A ruptura mecânica total do trim liberou o fluxo sem restrição.",
+    cadeia: "O colapso da Gaiola (Peça 6) e da Luva (Peça 8) envia onda de choque e pressão direta para a Zona de Saída (Zsaida) e tubulações jusante.",
+    dependentes: [6, 8, "Zsaida"],
     acao: "Fechar o poço imediatamente e substituir o trim.",
     pendencias: pendIsolar,
-    foco: { pecas: [6, 8, "Zsaida"], efeito: "areia", rotulo: "Trim rompido: sobrepressão liberada" },
+    foco: { pecas: [6, 8, "Zsaida"], efeito: "areia", rotulo: "Colapso de gaiola, luva e sobrepressão na saída" },
     fonte: "Proposta ChokeGuard IA." },
 
   { nome: "Pedido de manutenção com linha pressurizada", nivel: "critico", setor: "Segurança e Manutenção",
     sensores: { pressaoSaida: 850 }, dias: null,
-    causa: "Foi solicitada abertura com 850 psi de pressão residual retida na linha.",
-    acao: "Manter fechada, abrir o dreno e despressurizar antes da intervenção.",
+    causa: "Tentativa de abertura mecânica com pressão residual alta.",
+    cadeia: "A retenção de pressão afeta a Conexão de Dreno (Peça 33) e a Zona de Saída (Zsaida), oferecendo risco grave ao operador se aberta.",
+    dependentes: [33, "Zsaida"],
+    acao: "Manter fechada, abrir o dreno e despressurizar.",
     pendencias: [
       "Fechar e travar a válvula de bloqueio (wing valve)",
       "Abrir o dreno e esperar a pressão residual (850 psi) chegar a 0"
     ],
-    foco: { pecas: [33, "Zsaida"], efeito: "", rotulo: "Dreno: aliviar a pressão antes de abrir" },
+    foco: { pecas: [33, "Zsaida"], efeito: "", rotulo: "Dreno e saída retendo pressão perigosa" },
     fonte: "Catálogo DHV p. 5." }
 ];
 
@@ -219,12 +250,10 @@ function montarSubmenu() {
   }
 
   var html = "";
-
   criticos.forEach(function(o) {
     html += '<button type="button" onclick="dispararFalha(' + o.pos + ')">' + o.item.nome +
             ' <span class="tag critico">CRÍTICO</span></button>';
   });
-
   riscos.forEach(function(o) {
     html += '<button type="button" onclick="dispararFalha(' + o.pos + ')">' + o.item.nome +
             ' <span class="tag risco">RISCO</span></button>';
@@ -318,11 +347,9 @@ function mostrarLocal(foco) {
 function mostrarDicas(posicao) {
   document.getElementById("dicas-nome").textContent = falhas[posicao].nome;
   document.getElementById("dicas-porque").textContent = falhas[posicao].causa;
+  document.getElementById("dicas-cadeia").textContent = falhas[posicao].cadeia;
   var lista = document.getElementById("dicas-causas");
   lista.innerHTML = "<li>" + falhas[posicao].acao + "</li>";
-  if (falhas[posicao].afetaComponentes) {
-    lista.innerHTML += "<li style='color:#D93025; font-weight:bold;'>Propagação do Erro: " + falhas[posicao].afetaComponentes + "</li>";
-  }
   document.getElementById("dicas").hidden = false;
 }
 
