@@ -1,0 +1,105 @@
+/* ================= CSS: a aparência ================= */
+  :root { color-scheme: dark; }
+
+  /* O atributo "hidden" esconde um elemento. */
+  [hidden] { display: none; }
+
+  body { background-color: #12485C; background-image: linear-gradient(135deg, #17566B, #0E3A4F); color: #FFFFFF; font-family: Arial, Helvetica, sans-serif; padding: 0; margin: 0; }
+  .cabecalho { background: #F5F4EF; border-bottom: 4px solid #1D908F; padding: 10px 24px; }
+  .cabecalho img { display: block; width: 170px; max-width: 100%; height: auto; }
+  .cabecalho h1 { margin: 6px 0 0 0; font-size: 17px; line-height: 1.1; letter-spacing: 0.5px; color: #153049; }
+  .pagina { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: clamp(24px, 4vw, 34px); margin: 0 0 4px 0; }
+  .subtitulo { margin: 0 0 14px 0; color: #D6E6EC; }
+
+  .relatorio { background: #F5F3EC; color: #14303F; border: 4px solid #D93025; border-radius: 14px; padding: 16px 20px; margin-top: 12px; }
+  .relatorio.aviso { border-color: #E0A800; }   /* AVISO = borda amarela */
+  .relatorio.atencao { border-color: #D93025; } /* ATENÇÃO = borda vermelha */
+  .relatorio h2 { margin: 0 0 10px 0; }
+  .relatorio p { margin: 6px 0; line-height: 1.4; }
+
+  /* Botões */
+  .botoes { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  button { padding: 10px 16px; font-size: 16px; border-radius: 8px; border: none; background: #F0EFEA; color: #12304F; cursor: pointer; }
+  button.principal { background: #4CC9F0; font-weight: bold; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button:focus-visible { outline: 3px solid #FFFFFF; outline-offset: 2px; }
+
+  /* Card de status (em cima do desenho). A cor muda conforme a classe. */
+  .card-status { border-radius: 16px; padding: 18px 22px; }
+  .card-status h2 { font-size: 34px; margin: 0 0 4px 0; }
+  .card-status p { font-size: 18px; margin: 0; }
+  .card-status.desligado { background: #F0EFEA; color: #12304F; }
+  .card-status.normal    { background: #CDEED8; color: #12304F; }
+  .card-status.aviso     { background: #F5B800; color: #12304F; }
+  .card-status.atencao   { background: #DC3027; color: #FFFFFF; }
+
+  /* Área do desenho */
+  .cena { background: #F0EFEA; border-radius: 16px; padding: 8px; margin-top: 12px; }
+  svg { display: block; width: 100%; height: auto; }
+
+  /* Cores das peças da bomba */
+  .concreto { fill: #C9CCC4; }
+  .placa    { fill: #3B4A56; }
+  .motor    { fill: #3F7CAC; }
+  .aletas   { stroke: #2B5F86; stroke-width: 3; fill: none; }
+  .azul     { fill: #2F6690; }
+  .eixo     { fill: #9AA7B0; }
+  .guarda   { fill: #8A99A5; }
+  .aco      { fill: #5A6B78; }
+  .escuro   { fill: #34424D; }
+  .janela   { fill: #DCE6EC; stroke: #34424D; stroke-width: 3; }
+  .tubo     { fill: #4F6272; }
+  .flange   { fill: #2F3E4A; }
+  .fluxo    { stroke: #4CC9F0; stroke-width: 4; stroke-dasharray: 10 12; fill: none; }
+
+  /* ANIMAÇÕES: o rotor gira e o líquido corre pelos tubos.
+     "paused" = parado. Quando a bomba ganha a classe "ligada", passa a "running" = rodando. */
+  .rotor { transform-origin: 520px 206px; animation: girar 0.8s linear infinite; animation-play-state: paused; }
+  .fluxo { animation: fluir 0.6s linear infinite; animation-play-state: paused; }
+  #bomba.ligada .rotor, #bomba.ligada .fluxo { animation-play-state: running; }
+  @keyframes girar { to { transform: rotate(360deg); } }
+  @keyframes fluir { to { stroke-dashoffset: -22; } }
+
+  /* Anéis que marcam a peça com problema (amarelo = alerta, vermelho = risco) */
+  .anel { fill: none; stroke-width: 6; transform-box: fill-box; transform-origin: center; animation: pulsar 1.2s ease-out infinite; }
+  .anel.alerta { stroke: #C77F00; }
+  .anel.risco  { stroke: #DC3027; }
+  .anel.normal, .anel.desligado { display: none; }
+  @keyframes pulsar { from { transform: scale(0.85); } to { transform: scale(1.1); } }
+
+  /* Cartões dos sensores */
+  .sensores { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-top: 12px; }
+  .sensor { background: #F0EFEA; color: #12304F; border: 4px solid #B9B8B0; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .sensor.normal { border-color: #2E9E5B; }
+  .sensor.alerta { border-color: #E0A000; }
+  .sensor.risco  { border-color: #DC3027; }
+  .sensor h3 { font-size: 17px; margin: 0; }
+  .valor { margin: 0; font-size: 16px; }
+  .valor strong { font-size: 38px; }
+
+  /* Etiqueta com o status do sensor */
+  .status { margin: 0; align-self: flex-start; padding: 4px 12px; border-radius: 999px; font-size: 14px; font-weight: bold; background: #DAD9D1; color: #3E4A52; }
+  .sensor.normal .status { background: #CFEFD8; color: #14602F; }
+  .sensor.alerta .status { background: #FFE9A8; color: #6B4300; }
+  .sensor.risco  .status { background: #DC3027; color: #FFFFFF; }
+
+  /* As 3 faixas de cada sensor (as caixinhas da tabela) */
+  .faixa { margin: 0; padding: 6px 10px; border-radius: 8px; font-size: 14px; }
+  .f-normal { background: #D3F3DD; color: #1B6B38; }
+  .f-alerta { background: #FFF0C4; color: #6B4300; }
+  .f-risco  { background: #FFE0DD; color: #A32A22; }
+  /* A faixa em que o sensor está agora ganha um contorno escuro */
+  .sensor.normal .f-normal, .sensor.alerta .f-alerta, .sensor.risco .f-risco { outline: 3px solid #12304F; outline-offset: 1px; }
+
+  /* A peça afetada só aparece quando o sensor não está normal */
+  .componente { margin: 0; font-size: 14px; }
+  .sensor.normal .componente, .sensor.desligado .componente { display: none; }
+
+  /* Engrenagens decorativas de fundo */
+  .engrenagens { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .engrenagens img { position: absolute; height: auto; }
+  .cabecalho, .pagina { position: relative; z-index: 1; }
+
+  /* Para quem prefere menos movimento na tela */
+  @media (prefers-reduced-motion: reduce) { .anel { animation: none; } }

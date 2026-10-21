@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monitor de Bomba Centrífuga</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Engrenagens decorativas do fundo (cada uma com posição, tamanho e giro diferentes) -->
+<div class="engrenagens" aria-hidden="true">
+  <img src="engrenagem.png" alt="" style="left:2%;top:4%;width:120px;opacity:0.25;transform:rotate(15deg)">
+  <img src="engrenagem.png" alt="" style="left:14%;top:30%;width:60px;opacity:0.18;transform:rotate(-25deg)">
+  <img src="engrenagem.png" alt="" style="left:6%;top:62%;width:170px;opacity:0.2;transform:rotate(40deg)">
+  <img src="engrenagem.png" alt="" style="left:24%;top:82%;width:80px;opacity:0.25;transform:rotate(-10deg)">
+  <img src="engrenagem.png" alt="" style="left:30%;top:8%;width:45px;opacity:0.2;transform:rotate(60deg)">
+  <img src="engrenagem.png" alt="" style="left:44%;top:48%;width:110px;opacity:0.15;transform:rotate(-40deg)">
+  <img src="engrenagem.png" alt="" style="left:52%;top:88%;width:140px;opacity:0.22;transform:rotate(20deg)">
+  <img src="engrenagem.png" alt="" style="left:60%;top:14%;width:70px;opacity:0.2;transform:rotate(75deg)">
+  <img src="engrenagem.png" alt="" style="left:72%;top:40%;width:200px;opacity:0.18;transform:rotate(-15deg)">
+  <img src="engrenagem.png" alt="" style="left:80%;top:76%;width:90px;opacity:0.25;transform:rotate(35deg)">
+  <img src="engrenagem.png" alt="" style="left:90%;top:6%;width:130px;opacity:0.22;transform:rotate(-30deg)">
+  <img src="engrenagem.png" alt="" style="left:93%;top:52%;width:55px;opacity:0.2;transform:rotate(10deg)">
+  <img src="engrenagem.png" alt="" style="left:66%;top:64%;width:40px;opacity:0.2;transform:rotate(-55deg)">
+  <img src="engrenagem.png" alt="" style="left:38%;top:68%;width:50px;opacity:0.18;transform:rotate(25deg)">
+  <img src="engrenagem.png" alt="" style="left:86%;top:92%;width:70px;opacity:0.2;transform:rotate(50deg)">
+  <img src="engrenagem.png" alt="" style="left:18%;top:50%;width:35px;opacity:0.22;transform:rotate(-70deg)">
+</div>
+
+<header class="cabecalho">
+  <div class="logo-placa"><img src="Petrovicsemfundo-logo.png" alt="Logo PETRAVIC"></div>
+  <h1>System Máquina Centrífuga API 610</h1>
+</header>
+
+<!-- ================= HTML: a estrutura ================= -->
+<div class="pagina">
+  <br>
+  <p class="subtitulo">Bomba centrífuga API 610 com 5 sensores. Depois de iniciar, um problema aparece sozinho em alguns segundos. Dados fictícios, só para demonstração.</p>
+
+  <!-- Os botões. O "id" é o nome que o JavaScript usa para encontrar cada um. -->
+  <div class="botoes">
+    <button type="button" id="botao-iniciar" class="principal">Iniciar</button>
+    <button type="button" id="botao-alerta">Simular alerta</button>
+    <button type="button" id="botao-risco">Simular risco</button>
+    <button type="button" id="botao-reiniciar">Reiniciar</button>
+  </div>
+
+  <!-- O card de status. O JavaScript troca a classe (cor) e os textos. -->
+  <div id="card-status" class="card-status desligado" role="status">
+    <h2 id="status-titulo">DESLIGADO</h2>
+    <p id="status-texto">Clique em Iniciar para começar o monitoramento.</p>
+  </div>
+
+  <div id="relatorio" class="relatorio" hidden>
+    <h2>Relatório do sistema</h2>
+    <p><strong>Horário:</strong> <span id="rel-horario"></span></p>
+    <p><strong>Enviar para:</strong> <span id="rel-enviar"></span></p>
+    <p><strong>Nível:</strong> <span id="rel-nivel"></span></p>
+    <p><strong>Problema:</strong> <span id="rel-problema"></span></p>
+    <p><strong>O que está acontecendo:</strong> <span id="rel-acontecendo"></span></p>
+    <p><strong>Tempo estimado:</strong> <span id="rel-tempo"></span></p>
+    <p><strong>O que fazer:</strong> <span id="rel-fazer"></span></p>
+    <p><strong>Onde fica na válvula:</strong> <span id="rel-onde"></span></p>
+    <p><strong>Base técnica:</strong> <span id="rel-base"></span></p>
+  </div>
+
+  <!-- O desenho da bomba. SVG é uma forma de desenhar com texto: retângulos, linhas, círculos. -->
+  <div class="cena">
+    <svg id="bomba" viewBox="0 0 800 340" role="img" aria-label="Bomba centrífuga API 610: motor, acoplamento, mancal, carcaça e tubulações de sucção e descarga">
+      <rect class="concreto" x="0" y="300" width="800" height="40"/>     <!-- o piso de concreto -->
+      <rect class="placa" x="40" y="280" width="660" height="22" rx="3"/> <!-- a base de aço onde tudo é fixado -->
+
+      <!-- MOTOR (à esquerda) -->
+      <rect class="aco" x="95" y="262" width="45" height="18"/>          <!-- pés do motor -->
+      <rect class="aco" x="215" y="262" width="45" height="18"/>
+      <rect class="motor" x="75" y="150" width="205" height="112" rx="14"/>  <!-- corpo do motor -->
+      <path class="aletas" d="M100 160V252M120 160V252M140 160V252M160 160V252M180 160V252M200 160V252M220 160V252M240 160V252M260 160V252"/>  <!-- aletas de resfriamento -->
+      <rect class="azul" x="52" y="165" width="28" height="82" rx="8"/>  <!-- tampa do ventilador -->
+      <rect class="azul" x="150" y="128" width="64" height="24" rx="4"/> <!-- caixa de ligação elétrica -->
+
+      <!-- EIXO, ACOPLAMENTO e MANCAL (no meio) -->
+      <rect class="eixo" x="280" y="202" width="180" height="8"/>        <!-- o eixo que liga o motor à bomba -->
+      <rect class="guarda" x="290" y="178" width="70" height="56" rx="8"/>  <!-- proteção do acoplamento -->
+      <rect class="aco" x="385" y="242" width="42" height="38"/>         <!-- suporte do mancal -->
+      <rect class="aco" x="360" y="170" width="92" height="72" rx="10"/> <!-- caixa do mancal (rolamentos) -->
+      <rect class="aco" x="400" y="158" width="12" height="14"/>         <!-- respiro de óleo -->
+      <circle cx="376" cy="206" r="7" fill="#DCE6EC"/>                   <!-- visor do nível de óleo -->
+
+      <!-- TUBULAÇÃO DE DESCARGA (sai por cima) e de SUCÇÃO (entra pela direita) -->
+      <rect class="tubo" x="508" y="40" width="292" height="24"/>        <!-- tubo de descarga, na horizontal -->
+      <rect class="tubo" x="508" y="40" width="24" height="58"/>         <!-- tubo de descarga, na vertical -->
+      <rect class="tubo" x="640" y="190" width="160" height="32"/>       <!-- tubo de sucção -->
+      <polygon class="flange" points="650,34 650,70 690,34 690,70"/>     <!-- válvula na descarga -->
+      <rect class="flange" x="668" y="20" width="4" height="16"/>        <!-- haste da válvula -->
+      <rect class="flange" x="658" y="16" width="24" height="5" rx="2"/> <!-- volante da válvula -->
+
+      <!-- CARCAÇA (o corpo da bomba) e seus bocais -->
+      <circle class="aco" cx="520" cy="206" r="70"/>                     <!-- carcaça em caracol (volute) -->
+      <rect class="escuro" x="452" y="190" width="22" height="32" rx="3"/>   <!-- selo mecânico -->
+      <rect class="aco" x="502" y="108" width="36" height="34"/>         <!-- bocal de descarga -->
+      <rect class="flange" x="492" y="98" width="56" height="10" rx="2"/>
+      <rect class="aco" x="582" y="188" width="48" height="36"/>         <!-- bocal de sucção -->
+      <rect class="flange" x="630" y="178" width="10" height="56" rx="2"/>
+
+      <!-- A "janela" mostra o rotor (impelidor) girando dentro da carcaça -->
+      <circle class="janela" cx="520" cy="206" r="52"/>
+      <g class="rotor">
+        <rect class="azul" x="472" y="201" width="96" height="10" rx="5"/>
+        <rect class="azul" x="472" y="201" width="96" height="10" rx="5" transform="rotate(60 520 206)"/>
+        <rect class="azul" x="472" y="201" width="96" height="10" rx="5" transform="rotate(120 520 206)"/>
+        <circle class="escuro" cx="520" cy="206" r="12"/>
+      </g>
+
+      <!-- O líquido correndo: sucção (entra, vai para a esquerda) e descarga (sobe e sai pela direita) -->
+      <path class="fluxo" d="M800 206 H590"/>
+      <path class="fluxo" d="M520 140 V52 H800"/>
+
+      <!-- Os 5 anéis que marcam a peça de cada sensor (começam escondidos) -->
+      <circle id="anel-vazao" class="anel desligado" cx="520" cy="206" r="62"/>        <!-- rotor -->
+      <circle id="anel-pressao" class="anel desligado" cx="463" cy="206" r="26"/>      <!-- selo mecânico -->
+      <circle id="anel-temperatura" class="anel desligado" cx="410" cy="206" r="50"/>  <!-- mancal -->
+      <circle id="anel-vibracao" class="anel desligado" cx="330" cy="206" r="34"/>     <!-- eixo e acoplamento -->
+      <circle id="anel-consumo" class="anel desligado" cx="178" cy="206" r="92"/>      <!-- motor -->
+    </svg>
+  </div>
+
+  <!-- Os 5 sensores. Os números e o status são trocados pelo JavaScript. -->
+  <div class="sensores">
+
+    <div id="card-vazao" class="sensor desligado">
+      <h3>Vazão do Petróleo</h3>
+      <p class="valor"><strong id="valor-vazao">--</strong> m³/h</p>
+      <p id="status-vazao" class="status">Aguardando</p>
+      <p class="faixa f-normal">Normal: 108 a 132 m³/h</p>
+      <p class="faixa f-alerta">Alerta: 92 a 107 m³/h (queda progressiva)</p>
+      <p class="faixa f-risco">Risco: menos de 90 ou mais de 150 m³/h</p>
+      <p class="componente"><strong>Rotor / Impelidor:</strong> erosão das pás internas ou cavitação na linha de sucção.</p>
+    </div>
+
+    <div id="card-pressao" class="sensor desligado">
+      <h3>Pressão de Operação</h3>
+      <p class="valor"><strong id="valor-pressao">--</strong> bar</p>
+      <p id="status-pressao" class="status">Aguardando</p>
+      <p class="faixa f-normal">Normal: 46,0 a 55,0 bar</p>
+      <p class="faixa f-alerta">Alerta: 40,5 a 45,5 bar (oscilação de linha)</p>
+      <p class="faixa f-risco">Risco: menos de 40 ou mais de 60 bar</p>
+      <p class="componente"><strong>Selo Mecânico / Válvulas:</strong> perda de contenção primária nas faces de vedação.</p>
+    </div>
+
+    <div id="card-temperatura" class="sensor desligado">
+      <h3>Temperatura</h3>
+      <p class="valor"><strong id="valor-temperatura">--</strong> °C</p>
+      <p id="status-temperatura" class="status">Aguardando</p>
+      <p class="faixa f-normal">Normal: 70,0 a 90,0 °C</p>
+      <p class="faixa f-alerta">Alerta: 90,5 a 98,5 °C (subida de +0,8 °C por dia)</p>
+      <p class="faixa f-risco">Risco: menos de 60 ou mais de 100 °C</p>
+      <p class="componente"><strong>Mancal e Ventilação:</strong> degradação do filme lubrificante e atrito metálico severo.</p>
+    </div>
+
+    <div id="card-vibracao" class="sensor desligado">
+      <h3>Vibração Mecânica</h3>
+      <p class="valor"><strong id="valor-vibracao">--</strong> mm/s</p>
+      <p id="status-vibracao" class="status">Aguardando</p>
+      <p class="faixa f-normal">Normal: 0,50 a 4,50 mm/s</p>
+      <p class="faixa f-alerta">Alerta: 4,60 a 6,80 mm/s (curva ascendente)</p>
+      <p class="faixa f-risco">Risco: mais de 7,00 mm/s</p>
+      <p class="componente"><strong>Rolamento Radial e Eixo:</strong> folga mecânica, desalinhamento ou fissura na pista.</p>
+    </div>
+
+    <div id="card-consumo" class="sensor desligado">
+      <h3>Consumo Elétrico</h3>
+      <p class="valor"><strong id="valor-consumo">--</strong> kWh/m³</p>
+      <p id="status-consumo" class="status">Aguardando</p>
+      <p class="faixa f-normal">Normal: 3,10 a 3,90 kWh/m³</p>
+      <p class="faixa f-alerta">Alerta: 3,95 a 4,35 kWh/m³ (sobrecarga)</p>
+      <p class="faixa f-risco">Risco: menos de 2,8 ou mais de 4,4 kWh/m³</p>
+      <p class="componente"><strong>Motor Elétrico:</strong> aumento de corrente exigido para vencer resistência mecânica.</p>
+    </div>
+
+  </div>
+</div>
+
+<script src="script.js" defer></script>
+
+</body>
+</html>
