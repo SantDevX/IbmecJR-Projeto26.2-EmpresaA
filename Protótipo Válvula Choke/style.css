@@ -74,15 +74,13 @@
   .chao { fill: #D9CDB8; }
   .cano { fill: #153049; }
   .corpo { fill: #1D908F; stroke: #153049; stroke-width: 3; }   /* verde mineral enquanto tudo vai bem */
-  #valvula.aviso .corpo   { fill: #F2B705; }                    /* amarelo no AVISO */
-  #valvula.atencao .corpo { fill: #D93025; }                    /* vermelho na ATENÇÃO */
   .haste { stroke: #153049; stroke-width: 5; }
   .fluxo { stroke: #A1EDDC; stroke-width: 4; stroke-dasharray: 10 8; }
 
   /* A ANIMAÇÃO: o fluido corre pelo cano e o volante gira.
      "paused" = parada. Quando a válvula ganha a classe "ligada", passa a "running" = rodando. */
   .fluxo   { animation: correr 0.8s linear infinite; animation-play-state: paused; }
-  .volante { transform-origin: 200px 40px; animation: girar 2s ease-in-out infinite alternate; animation-play-state: paused; }
+  .volante { transform-origin: 240px 34px; animation: girar 2s ease-in-out infinite alternate; animation-play-state: paused; }
   #valvula.ligada .fluxo, #valvula.ligada .volante { animation-play-state: running; }
 
   @keyframes correr { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -18; } }
@@ -104,3 +102,61 @@
   .engrenagens { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
   .engrenagens img { position: absolute; height: auto; }
   .cabecalho, .pagina { position: relative; z-index: 1; }
+
+  /* ================= VÁLVULA CHOKE DE LUVA EXTERNA (cores do catálogo DHV) ================= */
+  #valvula { --cor-nivel: #F2B705; }                 /* amarelo no AVISO */
+  #valvula.atencao { --cor-nivel: #D93025; }         /* vermelho na ATENÇÃO */
+
+  .corpo { fill: #2e6cb4; stroke: #153049; stroke-width: 2; }
+  .interior { fill: #0f2536; }
+  .zona { fill: none; stroke: none; }
+  .porca { fill: #8a949e; stroke: #153049; stroke-width: 1.5; }
+  .oring { fill: none; stroke: #0b0b0b; stroke-width: 3; }
+  .oring-v { fill: #D93025; stroke: #153049; stroke-width: 1; }
+  .marca { stroke: #153049; stroke-width: 1; }
+  .c-amarelo, .c-roxo, .c-rosa, .c-verde, .c-laranja, .c-cinza, .c-vermelho, .c-azulclaro { stroke: #153049; stroke-width: 1.5; }
+  .c-amarelo { fill: #F2D21B; } .c-roxo { fill: #9b3fa0; } .c-rosa { fill: #e58aa8; } .c-verde { fill: #3fae49; }
+  .c-laranja { fill: #f08a24; } .c-cinza { fill: #8a949e; } .c-vermelho { fill: #d93025; } .c-azulclaro { fill: #5b9bd5; }
+  .nome-peca { font-size: 11px; fill: #153049; opacity: 0.75; }
+
+  /* Peça com defeito: contorno na cor do nível, pulsando */
+  [data-peca].destacar, [data-peca].destacar * { stroke: var(--cor-nivel) !important; stroke-width: 4 !important; }
+  .zona.destacar { fill: var(--cor-nivel); fill-opacity: 0.3; }
+  [data-peca].destacar { animation: pulsar 1s ease-in-out infinite; }
+
+  /* Marcador: caixa tracejada em volta + linha + etiqueta */
+  .alvo-anel { fill: none; stroke: var(--cor-nivel); stroke-width: 2.5; stroke-dasharray: 6 4; }
+  .alvo-linha { stroke: var(--cor-nivel); stroke-width: 2; }
+  .alvo-fundo { fill: #F5F4EF; stroke: var(--cor-nivel); stroke-width: 2; }
+  .alvo-texto { font-size: 12px; font-weight: bold; fill: #153049; }
+
+  /* Efeitos que só aparecem em certos problemas */
+  .areia-g, .bolhas, .gotas { display: none; }
+  #valvula.efeito-areia .areia-g, #valvula.efeito-bolhas .bolhas, #valvula.efeito-gotas .gotas { display: block; }
+  .areia-g circle { fill: #D9CDB8; animation: areia 1.6s linear infinite; }
+  .areia-g circle:nth-child(2) { animation-delay: 0.3s; } .areia-g circle:nth-child(3) { animation-delay: 0.6s; }
+  .areia-g circle:nth-child(4) { animation-delay: 0.9s; } .areia-g circle:nth-child(5) { animation-delay: 1.2s; } .areia-g circle:nth-child(6) { animation-delay: 0.45s; }
+  .bolhas circle { fill: #A1EDDC; animation: bolha 1.4s ease-in-out infinite; }
+  .bolhas circle:nth-child(2) { animation-delay: 0.3s; } .bolhas circle:nth-child(3) { animation-delay: 0.6s; }
+  .bolhas circle:nth-child(4) { animation-delay: 0.9s; } .bolhas circle:nth-child(5) { animation-delay: 0.2s; }
+  .gotas circle { fill: #0f2536; animation: gota 1s ease-in infinite; }
+  .gotas circle:nth-child(2) { animation-delay: 0.3s; } .gotas circle:nth-child(3) { animation-delay: 0.6s; }
+
+  @keyframes pulsar { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+  @keyframes areia  { 0% { transform: translateX(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateX(-95px); opacity: 0; } }
+  @keyframes bolha  { 0% { opacity: 0; transform: translateY(6px); } 50% { opacity: 0.9; } 100% { opacity: 0; transform: translateY(-14px); } }
+  @keyframes gota   { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(18px); } }
+  @media (prefers-reduced-motion: reduce) { [data-peca].destacar, .areia-g circle, .bolhas circle, .gotas circle { animation-duration: 5s; } }
+
+  .submenu { max-height: 70vh; overflow-y: auto; }
+
+  /* Caixa "Por que isso acontece" (aparece quando há problema) */
+  .dicas h2 { margin: 0 0 4px 0; font-size: 20px; }
+  .dicas h3 { margin: 10px 0 4px 0; font-size: 16px; }
+  .dicas p { margin: 4px 0; line-height: 1.4; }
+  .dicas ul { margin: 4px 0 0 0; padding-left: 20px; }
+  .dicas li { margin-bottom: 3px; }
+  .submenu { max-height: 70vh; overflow-y: auto; }
+
+  /* Setas que mostram o sentido do fluxo, no cano de entrada e no de saída */
+  .seta { fill: #A1EDDC; }

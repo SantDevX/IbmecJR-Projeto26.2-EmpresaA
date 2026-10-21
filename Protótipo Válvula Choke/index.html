@@ -50,7 +50,7 @@
 
 <div class="pagina">
 
-  <p class="intro">Clique em Iniciar. Depois de alguns segundos, um problema aleatório aparece. Ou escolha o problema em "Forçar problema".</p>
+  <p class="intro">Clique em Iniciar. Depois de alguns segundos, um problema aleatório aparece. Ou escolha o problema em "Forçar problema". A peça com defeito fica destacada na válvula.</p>
 
   <!-- Os botões. O "id" é o nome que o JavaScript usa para encontrar cada um. -->
   <div class="botoes">
@@ -63,11 +63,7 @@
        Cada botão chama dispararFalha(N), em que N é a posição do problema na lista "falhas" do JavaScript (começa em 0). -->
   <div id="submenu" class="cartao submenu" hidden>
     <h2>Qual problema você quer forçar?</h2>
-    <button type="button" onclick="dispararFalha(0)">Desgaste começando no trim <span class="tag aviso">AVISO</span></button>
-    <button type="button" onclick="dispararFalha(1)">Vibração por cavitação <span class="tag aviso">AVISO</span></button>
-    <button type="button" onclick="dispararFalha(2)">Erosão grave do trim por areia <span class="tag atencao">ATENÇÃO</span></button>
-    <button type="button" onclick="dispararFalha(3)">Furo no corpo da válvula <span class="tag atencao">ATENÇÃO</span></button>
-    <button type="button" onclick="dispararFalha(4)">Pedido de manutenção com linha pressurizada <span class="tag atencao">ATENÇÃO</span></button>
+    <div id="submenu-lista"></div>
     <button type="button" class="principal" onclick="sortearFalha()">Aleatório (o sistema escolhe)</button>
   </div>
 
@@ -91,90 +87,101 @@
         <p><strong>O que está acontecendo:</strong> <span id="rel-causa"></span></p>
         <p><strong>Tempo estimado:</strong> <span id="rel-dias"></span></p>
         <p><strong>O que fazer:</strong> <span id="rel-acao"></span></p>
+        <p><strong>Onde fica na válvula:</strong> <span id="rel-local"></span></p>
+        <p><strong>Base técnica:</strong> <span id="rel-fonte"></span></p>
       </div>
 
       <!-- O desenho da válvula choke. SVG é uma forma de desenhar com texto: retângulos, linhas, círculos. -->
       <div class="cena">
-        <svg id="valvula" viewBox="0 0 500 300" role="img" aria-label="Válvula choke em corte, com o local do problema destacado">
-          <rect class="chao" x="0" y="265" width="500" height="35"/>
-          <rect class="pe" x="192" y="250" width="30" height="15"/>             <!-- pés de apoio -->
-          <rect class="pe" x="278" y="250" width="30" height="15"/>
+        <svg id="valvula" viewBox="0 0 560 440" role="img" aria-label="Válvula choke de luva externa em corte, com o local do problema destacado">
+          <rect class="chao" x="0" y="422" width="560" height="18"/>
 
-          <!-- Canos de entrada e saída, com o fluido correndo dentro -->
-          <rect class="cano" x="0" y="190" width="190" height="40"/>
-          <rect class="cano cano-saida" x="310" y="190" width="190" height="40"/>
-          <line class="fluxo" x1="0" y1="210" x2="190" y2="210"/>
-          <line class="fluxo" x1="310" y1="210" x2="500" y2="210"/>
-
-          <!-- Manômetros (um em cada cano) -->
-          <line class="haste-fina" x1="90" y1="190" x2="90" y2="160"/>
-          <circle class="manometro" cx="90" cy="148" r="13"/><line class="ponteiro" x1="90" y1="148" x2="98" y2="141"/>
-          <line class="haste-fina" x1="430" y1="190" x2="430" y2="160"/>
-          <circle class="manometro" cx="430" cy="148" r="13"/><line class="ponteiro" x1="430" y1="148" x2="423" y2="141"/>
-
-          <!-- Dreno (usado para despressurizar a linha) -->
-          <rect class="cano" x="368" y="230" width="8" height="14"/>
-          <rect class="flange" x="361" y="244" width="22" height="10" rx="2"/>
-
-          <!-- Corpo da choke, castelo (bonnet), haste e volante -->
-          <rect class="corpo" x="180" y="150" width="140" height="100" rx="8"/>
-          <rect class="corpo" x="222" y="108" width="56" height="44"/>
-          <rect class="corpo" x="212" y="148" width="76" height="10" rx="2"/>
-          <rect class="flange" x="240" y="96" width="20" height="14" rx="2"/>
-          <line class="haste" x1="250" y1="42" x2="250" y2="96"/>
-          <g class="volante">
-            <rect x="200" y="34" width="100" height="12" rx="6" fill="#153049"/>
-            <circle cx="250" cy="40" r="8" fill="#1D908F" stroke="#153049" stroke-width="3"/>
+          <!-- Corpo (1): angular, entrada pela direita e saída para baixo, como no catálogo DHV -->
+          <g data-peca="1">
+            <rect class="corpo" x="170" y="195" width="140" height="145" rx="6"/>
+            <rect class="corpo" x="298" y="230" width="90" height="60"/>
+            <rect class="corpo" x="380" y="220" width="14" height="80" rx="2"/>
+            <rect class="corpo" x="205" y="338" width="70" height="44"/>
+            <rect class="corpo" x="188" y="376" width="104" height="14" rx="2"/>
           </g>
+          <rect class="interior" x="185" y="205" width="110" height="127"/>
+          <rect class="interior" x="293" y="238" width="92" height="44"/>
+          <rect class="interior" x="213" y="330" width="54" height="58"/>
+          <!-- Cano de entrada (fora da válvula, à direita) e cano de saída (embaixo), para o fluxo aparecer antes e depois da choke -->
+          <rect class="corpo" x="394" y="232" width="166" height="56"/>
+          <rect class="interior" x="385" y="238" width="175" height="44"/>
+          <rect class="corpo" x="205" y="388" width="70" height="34"/>
+          <rect class="interior" x="213" y="388" width="54" height="34"/>
+          <rect class="zona" data-peca="Zentrada" x="296" y="238" width="86" height="44"/>
+          <rect class="zona" data-peca="Zsaida" x="213" y="332" width="54" height="56"/>
+          <path class="fluxo" fill="none" d="M556,260 H240 V420"/>
+          <polygon class="seta" points="520,252 504,260 520,268"/>
+          <polygon class="seta" points="232,404 240,418 248,404"/>
 
-          <!-- Câmara interna (corte): aqui dentro ficam o trim e o orifício -->
-          <rect class="interior" x="186" y="162" width="128" height="76" rx="3"/>
-          <line class="fluxo" x1="186" y1="210" x2="228" y2="210"/>
-          <line class="fluxo" x1="272" y1="210" x2="314" y2="210"/>
-          <g class="trim">                                                      <!-- trim: as duas paredes do orifício -->
-            <rect x="226" y="178" width="14" height="25"/>
-            <rect x="226" y="217" width="14" height="21"/>
-            <rect x="260" y="178" width="14" height="25"/>
-            <rect x="260" y="217" width="14" height="21"/>
+          <!-- Castelo (2), prisioneiros e porcas (28-29), vedação corpo/castelo (27) -->
+          <g data-peca="2"><rect class="corpo" x="187" y="140" width="106" height="56"/><rect class="corpo" x="175" y="186" width="130" height="12" rx="2"/></g>
+          <g data-peca="28 29"><rect class="porca" x="177" y="174" width="14" height="12"/><rect class="porca" x="289" y="174" width="14" height="12"/></g>
+          <g data-peca="27"><circle class="oring" cx="190" cy="201" r="3.5"/><circle class="oring" cx="290" cy="201" r="3.5"/></g>
+
+          <!-- Gaxeta e vedação da haste: preme-gaxeta (16), anel de gaxeta (14), anel de apoio (15), vedação da haste (19) -->
+          <rect class="c-cinza" data-peca="16" x="222" y="144" width="36" height="8"/>
+          <rect class="c-verde" data-peca="14" x="224" y="152" width="32" height="8"/>
+          <rect class="c-vermelho" data-peca="15" x="224" y="160" width="32" height="8"/>
+          <rect class="c-laranja" data-peca="19" x="224" y="168" width="32" height="8"/>
+
+          <!-- Yoke (9), porca da haste (13), parafuso de trava (34), lubrificador (32), tampa indicadora (10), protetor da haste (11), volante (12) -->
+          <g data-peca="9"><rect class="corpo" x="212" y="100" width="56" height="42"/></g>
+          <rect class="c-rosa" data-peca="13" x="226" y="106" width="28" height="22"/>
+          <g data-peca="34"><rect class="c-cinza" x="196" y="114" width="18" height="8"/><rect class="c-cinza" x="190" y="109" width="8" height="18" rx="3"/></g>
+          <rect class="c-cinza" data-peca="32" x="266" y="124" width="16" height="9"/>
+          <g data-peca="10">
+            <rect class="c-amarelo" x="224" y="52" width="32" height="50"/>
+            <line class="marca" x1="226" y1="62" x2="238" y2="62"/><line class="marca" x1="226" y1="72" x2="238" y2="72"/>
+            <line class="marca" x1="226" y1="82" x2="238" y2="82"/><line class="marca" x1="226" y1="92" x2="238" y2="92"/>
           </g>
-          <line class="haste" x1="250" y1="162" x2="250" y2="176"/>
-          <polygon class="plug" points="238,172 262,172 257,203 243,203"/>      <!-- plug (agulha) que fecha o orifício -->
-          <rect class="orificio" x="240" y="203" width="20" height="14"/>        <!-- o orifício (bean) -->
+          <rect class="c-azulclaro" data-peca="11" x="232" y="40" width="16" height="14"/>
+          <g class="volante" data-peca="12"><rect x="150" y="28" width="180" height="12" rx="6" fill="#3b4350"/><rect x="234" y="24" width="12" height="20" rx="3" fill="#3b4350"/></g>
 
-          <!-- Cavitação: bolhas depois do orifício (só aparecem nesse problema) -->
-          <g class="bolhas">
-            <circle cx="285" cy="205" r="3"/><circle cx="298" cy="214" r="2.5"/><circle cx="292" cy="197" r="3.5"/>
-            <circle cx="326" cy="206" r="3"/><circle cx="345" cy="214" r="2.5"/><circle cx="364" cy="203" r="3"/>
-          </g>
+          <!-- Dreno (33), na lateral do corpo -->
+          <rect class="interior" x="170" y="253" width="16" height="4"/>
+          <g data-peca="33"><rect class="c-cinza" x="152" y="250" width="18" height="10"/><rect class="c-cinza" x="147" y="247" width="6" height="16"/></g>
 
-          <!-- Furo no corpo: buraco e jato escapando (só aparecem nesse problema) -->
-          <g class="jato">
-            <circle cx="302" cy="156" r="5" fill="#07121c"/>
-            <line x1="302" y1="148" x2="302" y2="128"/>
-            <line x1="305" y1="149" x2="320" y2="132"/>
-            <line x1="299" y1="149" x2="287" y2="134"/>
-            <circle cx="314" cy="126" r="2.5"/><circle cx="293" cy="124" r="2.5"/>
-          </g>
+          <!-- Dentro da câmara: luva externa (8), vedação da luva (20), gaiola (6), bucha (7), sede (3), inserto da sede (4), haste (5) -->
+          <g data-peca="8"><rect class="c-amarelo" x="198" y="205" width="84" height="12"/><rect class="c-amarelo" x="198" y="205" width="14" height="45"/><rect class="c-amarelo" x="268" y="205" width="14" height="45"/></g>
+          <g data-peca="20"><circle class="oring-v" cx="197" cy="216" r="2.5"/><circle class="oring-v" cx="283" cy="216" r="2.5"/></g>
+          <g data-peca="6"><rect class="c-rosa" x="214" y="217" width="12" height="33"/><rect class="c-rosa" x="214" y="270" width="12" height="50"/><rect class="c-rosa" x="254" y="217" width="12" height="33"/><rect class="c-rosa" x="254" y="270" width="12" height="50"/></g>
+          <g data-peca="7"><rect class="c-roxo" x="198" y="270" width="14" height="18"/><rect class="c-roxo" x="268" y="270" width="14" height="18"/></g>
+          <g data-peca="3"><rect class="c-verde" x="212" y="320" width="16" height="14"/><rect class="c-verde" x="252" y="320" width="16" height="14"/></g>
+          <g data-peca="4"><rect class="c-laranja" x="228" y="322" width="6" height="12"/><rect class="c-laranja" x="246" y="322" width="6" height="12"/></g>
+          <rect class="c-cinza" data-peca="5" x="235" y="176" width="10" height="56"/>
 
-          <!-- Nomes das peças -->
-          <text class="nome-peca" x="8" y="183">Entrada</text>
-          <text class="nome-peca" x="492" y="183" text-anchor="end">Saída</text>
-          <text class="nome-peca" x="190" y="44" text-anchor="end">Volante</text>
-          <text class="nome-peca" x="238" y="80" text-anchor="end">Haste</text>
-          <text class="nome-peca" x="208" y="132" text-anchor="end">Castelo (bonnet)</text>
-          <text class="nome-peca" x="250" y="262" text-anchor="middle">Trim e orifício (bean)</text>
+          <!-- Efeitos: areia entrando, bolhas de cavitação, gotas de vazamento (só aparecem nos problemas certos) -->
+          <g class="areia-g"><circle cx="372" cy="250" r="2.5"/><circle cx="380" cy="262" r="2"/><circle cx="366" cy="270" r="2.5"/><circle cx="376" cy="256" r="2"/><circle cx="384" cy="272" r="2.5"/><circle cx="370" cy="244" r="2"/></g>
+          <g class="bolhas"><circle cx="236" cy="296" r="3"/><circle cx="246" cy="304" r="2.5"/><circle cx="240" cy="288" r="3.5"/><circle cx="232" cy="310" r="2.5"/><circle cx="248" cy="292" r="2"/></g>
+          <g id="gotas" class="gotas"><circle cx="0" cy="4" r="3"/><circle cx="7" cy="9" r="2.5"/><circle cx="-7" cy="12" r="2.5"/></g>
 
-          <!-- MARCADOR DO PROBLEMA: o JavaScript muda a posição e o texto conforme o problema -->
+          <text class="nome-peca" x="402" y="226">Entrada (inlet)</text>
+          <text class="nome-peca" x="284" y="410">Saída (outlet)</text>
+
+          <!-- MARCADOR DO PROBLEMA: o JavaScript desenha em volta das peças com defeito -->
           <g id="alvo" hidden>
             <line id="alvo-linha" class="alvo-linha"/>
-            <circle id="alvo-anel" class="alvo-anel"/>
+            <rect id="alvo-anel" class="alvo-anel" rx="5"/>
             <rect id="alvo-fundo" class="alvo-fundo" rx="3"/>
             <text id="alvo-texto" class="alvo-texto"></text>
           </g>
         </svg>
       </div>
 
-      <!-- Os 6 sensores. Cada um mostra um número que o JavaScript atualiza. -->
+      <section id="dicas" class="cartao dicas" hidden>
+        <h2>Por que isso acontece</h2>
+        <h3 id="dicas-nome"></h3>
+        <p id="dicas-porque"></p>
+        <h3>O que costuma causar</h3>
+        <ul id="dicas-causas"></ul>
+      </section>
+
+      <!-- Os 8 sensores. Cada um mostra um número que o JavaScript atualiza. -->
       <div class="sensores">
         <div class="sensor"><span>Pressão entrada (psi)</span><strong id="pressaoEntrada">--</strong></div>
         <div class="sensor"><span>Pressão saída (psi)</span><strong id="pressaoSaida">--</strong></div>
@@ -182,6 +189,8 @@
         <div class="sensor"><span>Desvio do Cv (%)</span><strong id="desvio">--</strong></div>
         <div class="sensor"><span>Nível de areia (0 a 10)</span><strong id="areia">--</strong></div>
         <div class="sensor"><span>Vibração (mm/s)</span><strong id="vibracao">--</strong></div>
+        <div class="sensor"><span>Abertura (bean, 64avos de pol.)</span><strong id="abertura">--</strong></div>
+        <div class="sensor"><span>Temperatura (°C)</span><strong id="temperatura">--</strong></div>
       </div>
     </main>
 
