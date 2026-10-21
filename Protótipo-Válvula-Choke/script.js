@@ -42,7 +42,7 @@ var pendFuro = [
 ];
 
 var falhas = [
-  // RISCO (AMARELO) -> Palavra "RISCO" alterada para "RISCO" / "AVISO" conforme solicitado
+  // ATENÇÃO (AMARELO)
   { nome: "Desgaste começando no trim", nivel: "risco", setor: "Manutenção e Compras",
     sensores: { desvio: 7, areia: 4, vazao: 168 }, dias: 16,
     causa: "A areia começa a desgastar a gaiola e a bucha (o trim).",
@@ -123,7 +123,7 @@ var falhas = [
     foco: { pecas: [3, 6, 7], efeito: "bolhas", rotulo: "Trim estilhaçado afetando sede e gaiola" },
     fonte: "McIlvaine slide 51." },
 
-  // CRÍTICO (VERMELHO) -> Alterado para "CRÍTICO"
+  // CRÍTICO (VERMELHO)
   { nome: "Erosão grave do trim por areia", nivel: "critico", setor: "Manutenção, Compras, Financeiro e Segurança",
     sensores: { desvio: 22, areia: 8, vazao: 192 }, dias: null,
     causa: "A areia corroeu profundamente os componentes internos.",
@@ -211,10 +211,11 @@ var falhas = [
 var normais = { pressaoEntrada: 3000, pressaoSaida: 800, vazao: 158, desvio: 1, areia: 1, vibracao: 2.4, abertura: 64, temperatura: 60 };
 var casasDecimais = { pressaoEntrada: 0, pressaoSaida: 0, vazao: 0, desvio: 1, areia: 0, vibracao: 1, abertura: 0, temperatura: 0 };
 
+// Alterado aqui de "RISCO" para "ATENÇÃO"
 var estados = {
   desligado: { nome: "DESLIGADO", text: "Clique em Iniciar para começar o monitoramento." },
   normal:    { nome: "NORMAL",    text: "Nenhum problema. A válvula está funcionando bem." },
-  risco:     { nome: "RISCO",     text: "Aviso de risco no sistema. Planeje a verificação." },
+  risco:     { nome: "ATENÇÃO",   text: "Aviso de atenção no sistema. Planeje a verificação." },
   critico:   { nome: "CRÍTICO",   text: "Alerta crítico! Não abra a válvula e notifique a equipe." }
 };
 
@@ -343,9 +344,10 @@ function montarSubmenu() {
     html += '<button type="button" onclick="dispararFalha(' + o.pos + ')">' + o.item.nome +
             ' <span class="tag critico">CRÍTICO</span></button>';
   });
+  // Alterado aqui de "RISCO" para "ATENÇÃO" na tag do submenu
   riscos.forEach(function(o) {
     html += '<button type="button" onclick="dispararFalha(' + o.pos + ')">' + o.item.nome +
-            ' <span class="tag risco">RISCO</span></button>';
+            ' <span class="tag risco">ATENÇÃO</span></button>';
   });
 
   document.getElementById("submenu-lista").innerHTML = html;

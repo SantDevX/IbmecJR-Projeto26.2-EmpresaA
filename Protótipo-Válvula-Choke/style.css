@@ -49,7 +49,7 @@ button.destaque  { background: #153049; border-color: #153049; color: #FFFFFF; }
 .submenu h2 { margin: 0 0 8px 0; font-size: 18px; }
 .submenu button { display: block; width: 100%; text-align: left; border-radius: 10px; font-size: 15px; margin-bottom: 8px; }
 .tag { float: right; font-size: 12px; padding: 3px 8px; border-radius: 999px; font-weight: bold; }
-.tag.risco   { background: #F2B705; color: #153049; }
+.tag.risco   { background: #B35900; color: #FFFFFF; } /* Tom de amarelo escuro ajustado para contraste no WAVE */
 .tag.critico { background: #A30000; color: #FFFFFF; }
 
 /* Layout Grid */
@@ -61,7 +61,7 @@ button.destaque  { background: #153049; border-color: #153049; color: #FFFFFF; }
 .estado h2 { margin: 0; font-size: 30px; }
 .estado p { margin: 4px 0 0 0; }
 .estado.normal  { background: #15655C; color: #FFFFFF; }
-.estado.risco   { background: #D9822B; color: #153049; }
+.estado.risco   { background: #B35900; color: #FFFFFF; } /* Alerta/Atenção otimizado para contraste */
 .estado.critico { background: #A30000; color: #FFFFFF; }
 
 /* Desenho da Válvula */
@@ -99,7 +99,7 @@ svg { display: block; width: 100%; height: auto; }
 .regua-normal { display: block; font-size: 11px; color: #444444; margin-top: 4px; border-top: 1px dashed #cccccc; padding-top: 2px; }
 
 /* Destaques e Animações */
-#valvula { --cor-nivel: #D9822B; }
+#valvula { --cor-nivel: #B35900; }
 #valvula.critico { --cor-nivel: #A30000; }
 
 [data-peca].destacar, [data-peca].destacar * { stroke: var(--cor-nivel) !important; stroke-width: 4 !important; }
