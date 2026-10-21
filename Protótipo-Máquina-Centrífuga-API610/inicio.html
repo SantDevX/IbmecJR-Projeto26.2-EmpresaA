@@ -31,14 +31,14 @@
 <header class="cabecalho">
   <div class="header-container">
     <div class="brand">
-      <a class="logo-placa" href="../Pagina-Apresentacao/index.html" aria-label="Início da Petravic">
+      <a href="../Pagina-Apresentacao/index.html" aria-label="Início da Petravic">
         <img src="Petrovicsemfundo-logo.png" alt="Logo PETRAVIC">
       </a>
       <h1>Máquina Centrífuga API 610</h1>
     </div>
     <nav aria-label="Navegação dos protótipos">
       <ul class="nav-list">
-        <li><a class="nav-inicio" href="../Pagina-Apresentacao/index.html">Início</a></li>
+        <li><a href="../Pagina-Apresentacao/index.html">Início</a></li>
         <li><a href="../Protótipo-Válvula-Choke/index.html">Válvula Choke</a></li>
       </ul>
       <button class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">&#9776;</button>
@@ -55,7 +55,7 @@
   <div class="botoes">
     <button type="button" id="botao-iniciar" class="principal">Iniciar</button>
     <button type="button" id="botao-alerta">Simular estado de alerta</button>
-    <button type="button" id="botao-risco">Simular estado risco</button>
+    <button type="button" id="botao-critico">Simular estado crítico</button>
     <button type="button" id="botao-reiniciar">Reiniciar</button>
   </div>
 
@@ -134,7 +134,7 @@
       <p id="status-vazao" class="status">Aguardando</p>
       <p class="faixa f-normal">Normal: 108 a 132 m³/h</p>
       <p class="faixa f-alerta">Alerta: 92 a 107 m³/h (queda progressiva)</p>
-      <p class="faixa f-risco">Crítico: menos de 90 ou mais de 150 m³/h</p>
+      <p class="faixa f-critico">Crítico: menos de 90 ou mais de 150 m³/h</p>
       <p class="componente"><strong>Rotor / Impelidor:</strong> erosão das pás internas ou cavitação na linha de sucção.</p>
     </div>
 
@@ -144,7 +144,7 @@
       <p id="status-pressao" class="status">Aguardando</p>
       <p class="faixa f-normal">Normal: 46,0 a 55,0 bar</p>
       <p class="faixa f-alerta">Alerta: 40,5 a 45,5 bar (oscilação de linha)</p>
-      <p class="faixa f-risco">Crítico: menos de 40 ou mais de 60 bar</p>
+      <p class="faixa f-critico">Crítico: menos de 40 ou mais de 60 bar</p>
       <p class="componente"><strong>Selo Mecânico / Válvulas:</strong> perda de contenção primária nas faces de vedação.</p>
     </div>
 
@@ -154,7 +154,7 @@
       <p id="status-temperatura" class="status">Aguardando</p>
       <p class="faixa f-normal">Normal: 70,0 a 90,0 °C</p>
       <p class="faixa f-alerta">Alerta: 90,5 a 98,5 °C (subida de +0,8 °C por dia)</p>
-      <p class="faixa f-risco">Crítico: menos de 60 ou mais de 100 °C</p>
+      <p class="faixa f-critico">Crítico: menos de 60 ou mais de 100 °C</p>
       <p class="componente"><strong>Mancal e Ventilação:</strong> degradação do filme lubrificante e atrito metálico severo.</p>
     </div>
 
@@ -164,7 +164,7 @@
       <p id="status-vibracao" class="status">Aguardando</p>
       <p class="faixa f-normal">Normal: 0,50 a 4,50 mm/s</p>
       <p class="faixa f-alerta">Alerta: 4,60 a 6,80 mm/s (curva ascendente)</p>
-      <p class="faixa f-risco">Crítico: mais de 7,00 mm/s</p>
+      <p class="faixa f-critico">Crítico: mais de 7,00 mm/s</p>
       <p class="componente"><strong>Rolamento Radial e Eixo:</strong> folga mecânica, desalinhamento ou fissura na pista.</p>
     </div>
 
@@ -174,7 +174,7 @@
       <p id="status-consumo" class="status">Aguardando</p>
       <p class="faixa f-normal">Normal: 3,10 a 3,90 kWh/m³</p>
       <p class="faixa f-alerta">Alerta: 3,95 a 4,35 kWh/m³ (sobrecarga)</p>
-      <p class="faixa f-risco">Crítico: menos de 2,8 ou mais de 4,4 kWh/m³</p>
+      <p class="faixa f-critico">Crítico: menos de 2,8 ou mais de 4,4 kWh/m³</p>
       <p class="componente"><strong>Motor Elétrico:</strong> aumento de corrente exigido para vencer resistência mecânica.</p>
     </div>
 

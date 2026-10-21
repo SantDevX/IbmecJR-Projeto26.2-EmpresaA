@@ -4,17 +4,17 @@
   // Uma lista com os 5 sensores, com os números da tabela:
   //   media            = valor típico quando tudo vai bem
   //   normalMin/Max    = faixa normal (verde)
-  //   riscoMenorQue    = abaixo disso é risco (vermelho)
-  //   riscoMaiorQue    = acima disso é risco (vermelho)
-  //   alvoAlerta/Risco = valor para onde o sensor caminha quando simulamos um problema
+  //   criticoMenorQue  = abaixo disso é crítico (vermelho)
+  //   criticoMaiorQue  = acima disso é crítico (vermelho)
+  //   alvoAlerta/Critico = valor para onde o sensor caminha quando simulamos um problema
   //   casas            = quantas casas decimais mostrar
   // Se mudar uma faixa, mude também o texto dela no HTML.
   var sensores = [
-    { id: "vazao",       media: 120, casas: 0, normalMin: 108, normalMax: 132, riscoMenorQue: 90,  riscoMaiorQue: 150, alvoAlerta: 100,  alvoRisco: 80  },
-    { id: "pressao",     media: 50,  casas: 1, normalMin: 46,  normalMax: 55,  riscoMenorQue: 40,  riscoMaiorQue: 60,  alvoAlerta: 43,   alvoRisco: 35  },
-    { id: "temperatura", media: 80,  casas: 1, normalMin: 70,  normalMax: 90,  riscoMenorQue: 60,  riscoMaiorQue: 100, alvoAlerta: 94,   alvoRisco: 105 },
-    { id: "vibracao",    media: 3,   casas: 2, normalMin: 0.5, normalMax: 4.5, riscoMenorQue: 0,   riscoMaiorQue: 7,   alvoAlerta: 5.7,  alvoRisco: 7.8 },
-    { id: "consumo",     media: 3.5, casas: 2, normalMin: 3.1, normalMax: 3.9, riscoMenorQue: 2.8, riscoMaiorQue: 4.4, alvoAlerta: 4.15, alvoRisco: 4.7 }
+    { id: "vazao",       media: 120, casas: 0, normalMin: 108, normalMax: 132, criticoMenorQue: 90,  criticoMaiorQue: 150, alvoAlerta: 100,  alvoCritico: 80  },
+    { id: "pressao",     media: 50,  casas: 1, normalMin: 46,  normalMax: 55,  criticoMenorQue: 40,  criticoMaiorQue: 60,  alvoAlerta: 43,   alvoCritico: 35  },
+    { id: "temperatura", media: 80,  casas: 1, normalMin: 70,  normalMax: 90,  criticoMenorQue: 60,  criticoMaiorQue: 100, alvoAlerta: 94,   alvoCritico: 105 },
+    { id: "vibracao",    media: 3,   casas: 2, normalMin: 0.5, normalMax: 4.5, criticoMenorQue: 0,   criticoMaiorQue: 7,   alvoAlerta: 5.7,  alvoCritico: 7.8 },
+    { id: "consumo",     media: 3.5, casas: 2, normalMin: 3.1, normalMax: 3.9, criticoMenorQue: 2.8, criticoMaiorQue: 4.4, alvoAlerta: 4.15, alvoCritico: 4.7 }
   ];
 
   // Os textos do card de status (os 3 da imagem, mais o NORMAL para quando tudo vai bem).
@@ -26,7 +26,7 @@
   };
 
   // O nome de cada status, como aparece na etiqueta do sensor.
-  var nomesStatus = { normal: "Normal", alerta: "Alerta", risco: "Risco" };
+  var nomesStatus = { normal: "Normal", alerta: "Alerta", critico: "Crítico" };
 
   // 2) A MEMÓRIA
   var ligado = false;          // a bomba está ligada?
@@ -80,15 +80,15 @@
   }
 
   // e) Monta a mensagem do alerta com os mesmos nomes de campo que o n8n já usa e PUBLICA no tópico
-  //    sensor = o sensor com problema | valor = o valor lido | status = "alerta" ou "risco"
+  //    sensor = o sensor com problema | valor = o valor lido | status = "alerta" ou "critico"
   function enviarAlerta(sensor, valor, status) {
     if (!clienteMQTT || !clienteMQTT.connected) { mostrarStatusMQTT("❌ Alerta NÃO enviado: sem conexão com o broker"); return; }
     var info = infoSensores[sensor.id];
     var mensagem = {
       maquina: MAQUINA,
       dataHora: new Date().toISOString(),
-      status: status === "risco" ? "critico" : "alerta",          // o n8n entende "critico" ou "alerta"
-      problema: info.nome + (status === "risco" ? " em nível de risco" : " fora do normal"),
+      status: status === "critico" ? "critico" : "alerta",        // o n8n entende "critico" ou "alerta"
+      problema: info.nome + (status === "critico" ? " em nível crítico" : " fora do normal"),
       componente: info.componente,
       setor: info.setor,
       nome: info.nome,
@@ -106,10 +106,10 @@
   }
 
   // f) Os valores caminham aos poucos até o problema. Esta função só envia UMA vez por problema:
-  //    quando o sensor chega no nível que foi pedido (alerta ou risco).
+  //    quando o sensor chega no nível que foi pedido (alerta ou critico).
   function conferirEnvio(sensor, valor, status) {
     if (!sensor.nivelProblema || sensor.enviado) return;           // sem problema, ou já enviado
-    var chegou = (status === "risco") || (status === "alerta" && sensor.nivelProblema === "alerta");
+    var chegou = (status === "critico") || (status === "alerta" && sensor.nivelProblema === "alerta");
     if (chegou) {
       sensor.enviado = true;
       enviarAlerta(sensor, valor, status);
@@ -126,16 +126,16 @@
   var textoStatus = document.getElementById("status-texto");
   var botaoIniciar = document.getElementById("botao-iniciar");
   var botaoAlerta = document.getElementById("botao-alerta");
-  var botaoRisco = document.getElementById("botao-risco");
+  var botaoCritico = document.getElementById("botao-critico");
   var botaoReiniciar = document.getElementById("botao-reiniciar");
 
   // 4) AS FUNÇÕES (cada uma faz uma coisa)
 
-  // Decide o status de um valor: "normal", "alerta" ou "risco".
+  // Decide o status de um valor: "normal", "alerta" ou "critico".
   function calcularStatus(sensor, valor) {
-    if (valor < sensor.riscoMenorQue || valor > sensor.riscoMaiorQue) return "risco";
+    if (valor < sensor.criticoMenorQue || valor > sensor.criticoMaiorQue) return "critico";
     if (valor >= sensor.normalMin && valor <= sensor.normalMax) return "normal";
-    return "alerta";   // fora do normal, mas ainda sem chegar no risco
+    return "alerta";   // fora do normal, mas ainda sem chegar no nível crítico
   }
 
   // Troca a cor e os textos do card de status. "chave" é: desligado, normal, alerta ou critico.
@@ -155,17 +155,17 @@
     atualizar();
   }
 
-  // Sorteia se o problema será um alerta ou um risco.
+  // Sorteia se o problema será um alerta ou um nível crítico.
   function sortearProblema() {
-    var nivel = (Math.random() < 0.5) ? "alerta" : "risco";
+    var nivel = (Math.random() < 0.5) ? "alerta" : "critico";
     provocarProblema(nivel);
   }
 
-  // Escolhe um sensor ao acaso e manda ele caminhar até o valor de alerta ou de risco.
+  // Escolhe um sensor ao acaso e manda ele caminhar até o valor de alerta ou crítico.
   function provocarProblema(nivel) {
     if (!ligado) return;   // bomba desligada, não faz nada
     var sensor = sensores[Math.floor(Math.random() * sensores.length)];   // sorteio
-    sensor.alvo = (nivel === "alerta") ? sensor.alvoAlerta : sensor.alvoRisco;
+    sensor.alvo = (nivel === "alerta") ? sensor.alvoAlerta : sensor.alvoCritico;
     sensor.nivelProblema = nivel; sensor.enviado = false;                // NOVO (Julia): marca o problema para enviar
   }
 
@@ -184,12 +184,12 @@
       document.getElementById("card-" + s.id).className = "sensor " + status;               // muda a cor do cartão
       document.getElementById("anel-" + s.id).setAttribute("class", "anel " + status);      // mostra ou esconde o anel
 
-      if (status === "risco") pior = "risco";
-      if (status === "alerta" && pior !== "risco") pior = "alerta";
+      if (status === "critico") pior = "critico";
+      if (status === "alerta" && pior !== "critico") pior = "alerta";
     }
 
     // O card de cima mostra o pior caso.
-    if (pior === "risco") mostrarCard("critico");
+    if (pior === "critico") mostrarCard("critico");
     else if (pior === "alerta") mostrarCard("alerta");
     else mostrarCard("normal");
   }
@@ -218,8 +218,8 @@
   // "Quando clicarem neste botão, rode esta função."
   botaoIniciar.addEventListener("click", iniciar);
   botaoReiniciar.addEventListener("click", reiniciar);
-  // Estes dois precisam passar uma informação ("alerta" ou "risco"), então usam uma função sem nome:
+  // Estes dois precisam passar uma informação ("alerta" ou "critico"), então usam uma função sem nome:
   botaoAlerta.addEventListener("click", function () { provocarProblema("alerta"); });
-  botaoRisco.addEventListener("click", function () { provocarProblema("risco"); });
+  botaoCritico.addEventListener("click", function () { provocarProblema("critico"); });
 
   reiniciar();   // deixa a página no estado inicial (desligado)
