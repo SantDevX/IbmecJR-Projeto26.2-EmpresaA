@@ -42,7 +42,7 @@ var pendFuro = [
 ];
 
 var falhas = [
-  // RISCO (AMARELO)
+  // ALERTA (AMARELO)
   { nome: "Desgaste começando no trim", nivel: "risco", setor: "Manutenção e Compras",
     sensores: { desvio: 7, areia: 4, vazao: 168 }, dias: 16,
     causa: "A areia começa a desgastar a gaiola e a bucha (o trim).",
@@ -214,7 +214,7 @@ var casasDecimais = { pressaoEntrada: 0, pressaoSaida: 0, vazao: 0, desvio: 1, a
 var estados = {
   desligado: { nome: "DESLIGADO", text: "Clique em Iniciar para começar o monitoramento." },
   normal:    { nome: "NORMAL",    text: "Nenhum problema. A válvula está funcionando bem." },
-  risco:     { nome: "RISCO",     text: "Aviso de risco no sistema. Planeje a verificação." },
+  risco:     { nome: "ALERTA",    text: "Alerta no sistema. Planeje a verificação." },
   critico:   { nome: "CRÍTICO",   text: "Alerta crítico! Não abra a válvula e notifique a equipe." }
 };
 
@@ -223,13 +223,111 @@ var sistemaLigado = false;
 var relogioFalha = null;
 var relogioSensores = null;
 
+  // ================= NOVO (Julia): envio do alerta para o n8n pelo MQTT =================
+  // Tudo que está entre esta linha e "FIM DO MQTT" foi adicionado. O resto do arquivo continua igual.
+
+  // a) Onde fica o broker (o "carteiro") e em qual tópico (o "grupo") este protótipo publica
+  var BROKER = "wss://broker.hivemq.com:8884/mqtt";
+  var TOPICO = "inspectai-ibmecjr/compressor/CHOKE-01";
+  var MAQUINA = "Válvula Choke 01";
+  var clienteMQTT = null;
+
+  // b) Informações de cada sensor que o n8n precisa: nome, unidade e faixa segura (min e max)
+  //    As faixas são valores de demonstração, escolhidos em volta dos valores normais.
+  var infoSensores = {
+    pressaoEntrada: { nome: "Pressão de entrada", un: "psi",  min: 2900, max: 3200 },
+    pressaoSaida:   { nome: "Pressão de saída",   un: "psi",  min: 700,  max: 900 },
+    vazao:          { nome: "Vazão",              un: "gpm",  min: 130,  max: 180 },
+    desvio:         { nome: "Desvio do Cv",       un: "%",    min: -5,   max: 5 },
+    areia:          { nome: "Nível de areia",     un: "/10",  min: 0,    max: 3 },
+    vibracao:       { nome: "Vibração",           un: "mm/s", min: 0,    max: 3.5 },
+    abertura:       { nome: "Abertura da choke",  un: "%",    min: 50,   max: 75 },
+    temperatura:    { nome: "Temperatura",        un: "°C",   min: 10,   max: 80 }
+  };
+
+  // c) Mostra no canto da tela se o MQTT está conectado e se o alerta foi enviado
+  function mostrarStatusMQTT(texto) {
+    var caixa = document.getElementById("mqtt-status");
+    if (!caixa) {                                   // se ainda não existe, cria a caixinha
+      caixa = document.createElement("div");
+      caixa.id = "mqtt-status";
+      caixa.style.cssText = "position:fixed;bottom:12px;right:12px;z-index:9;background:#F5F4EF;color:#153049;" +
+                            "border:2px solid #1D908F;border-radius:10px;padding:8px 12px;font:bold 14px Arial,sans-serif;";
+      document.body.appendChild(caixa);
+    }
+    caixa.textContent = "📡 MQTT: " + texto;
+  }
+
+  // d) Carrega a biblioteca do MQTT e conecta no broker (assim o index.html não precisa mudar)
+  function conectarMQTT() {
+    mostrarStatusMQTT("Conectando...");
+    var biblioteca = document.createElement("script");
+    biblioteca.src = "https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js";
+    biblioteca.onload = function () {
+      clienteMQTT = mqtt.connect(BROKER);
+      clienteMQTT.on("connect", function () { mostrarStatusMQTT("✅ Conectado ao broker"); });
+      clienteMQTT.on("error", function (erro) { mostrarStatusMQTT("❌ Erro: " + erro.message); });
+    };
+    biblioteca.onerror = function () { mostrarStatusMQTT("❌ Não consegui carregar a biblioteca (sem internet?)"); };
+    document.head.appendChild(biblioteca);
+  }
+
+  // e) Escolhe o sensor principal do problema: o que mais saiu do normal, comparando com o tamanho da faixa
+  function sensorPrincipal(falha) {
+    var melhor = null, maiorDesvio = -1;
+    for (var nome in falha.sensores) {
+      var info = infoSensores[nome];
+      var desvioRelativo = Math.abs(falha.sensores[nome] - normais[nome]) / (info.max - info.min);
+      if (desvioRelativo > maiorDesvio) { maiorDesvio = desvioRelativo; melhor = nome; }
+    }
+    return melhor;
+  }
+
+  // f) Monta a mensagem do alerta com os mesmos nomes de campo que o n8n já usa e PUBLICA no tópico
+  function enviarAlerta(falha) {
+    if (!clienteMQTT || !clienteMQTT.connected) { mostrarStatusMQTT("❌ Alerta NÃO enviado: sem conexão com o broker"); return; }
+    var principal = sensorPrincipal(falha);
+    var info = infoSensores[principal];
+
+    var outros = [];                                // todos os sensores afetados, em texto
+    for (var nome in falha.sensores) {
+      outros.push(infoSensores[nome].nome + ": " + falha.sensores[nome] + " " + infoSensores[nome].un);
+    }
+
+    var mensagem = {
+      maquina: MAQUINA,
+      dataHora: new Date().toISOString(),
+      status: falha.nivel === "critico" ? "critico" : "alerta",   // o n8n entende "critico" ou "alerta" (aqui, "risco" vira "alerta")
+      problema: falha.nome,
+      causa: falha.causa,
+      cadeia: falha.cadeia,
+      acao: falha.acao,
+      dias: falha.dias,
+      setor: falha.setor,
+      nome: info.nome,                              // o sensor principal do problema
+      un: info.un,
+      valor: falha.sensores[principal],
+      media: normais[principal],
+      min: info.min,
+      max: info.max,
+      sensoresAfetados: outros.join("; ")
+    };
+
+    // QoS 1 = "pelo menos uma vez": o broker precisa confirmar (PUBACK)
+    clienteMQTT.publish(TOPICO, JSON.stringify(mensagem), { qos: 1 }, function (erro) {
+      mostrarStatusMQTT(erro ? "❌ Alerta NÃO enviado: " + erro.message : "📤 Alerta enviado e confirmado pelo broker (QoS 1)");
+    });
+  }
+
+  conectarMQTT();
+  // ================= FIM DO MQTT =================
+
 var valvula = document.getElementById("valvula");
 var caixaEstado = document.getElementById("estado");
 var submenu = document.getElementById("submenu");
 var botaoIniciar = document.getElementById("botao-iniciar");
 var botaoFalha = document.getElementById("botao-falha");
 var botaoReiniciar = document.getElementById("botao-reiniciar");
-var botaoManutencao = document.getElementById("botao-manutencao");
 var alvo = document.getElementById("alvo");
 var alvoAnel = document.getElementById("alvo-anel");
 var alvoLinha = document.getElementById("alvo-linha");
@@ -256,7 +354,7 @@ function montarSubmenu() {
   });
   riscos.forEach(function(o) {
     html += '<button type="button" onclick="dispararFalha(' + o.pos + ')">' + o.item.nome +
-            ' <span class="tag risco">RISCO</span></button>';
+            ' <span class="tag risco">ALERTA</span></button>';
   });
 
   document.getElementById("submenu-lista").innerHTML = html;
@@ -273,7 +371,6 @@ function iniciar() {
   valvula.classList.add("ligada");
   botaoIniciar.disabled = true;
   botaoFalha.disabled = false;
-  botaoManutencao.disabled = false;
   mostrarEstado("normal");
   var espera = 8000 + Math.random() * 12000;
   relogioFalha = setTimeout(sortearFalha, espera);
@@ -293,6 +390,7 @@ function dispararFalha(posicao) {
   if (!sistemaLigado) return;
   clearTimeout(relogioFalha);
   falhaAtual = falhas[posicao];
+  enviarAlerta(falhaAtual);                             // NOVO (Julia): manda o alerta pro n8n
 
   valvula.classList.remove("risco", "critico");
   valvula.classList.add("ligada", falhaAtual.nivel);
@@ -303,7 +401,6 @@ function dispararFalha(posicao) {
   mostrarEstado(falhaAtual.nivel);
   mostrarDicas(posicao);
   mostrarLocal(falhaAtual.foco);
-  limparManutencao();
   atualizarSensores();
 }
 
@@ -372,34 +469,6 @@ function atualizarSensores() {
   }
 }
 
-function verificarManutencao() {
-  var pendencias = [];
-  if (falhaAtual !== null) pendencias = falhaAtual.pendencias;
-  var seguro = (pendencias.length === 0);
-
-  var lista = document.getElementById("manut-lista");
-  lista.innerHTML = "";
-  if (seguro) {
-    document.getElementById("manut-caixa").className = "manut-caixa seguro";
-    document.getElementById("manut-nome").textContent = "SEGURO";
-    document.getElementById("manut-texto").textContent = "Pode fazer a manutenção. A linha está despressurizada e estabilizada.";
-  } else {
-    document.getElementById("manut-caixa").className = "manut-caixa naoseguro";
-    document.getElementById("manut-nome").textContent = "NÃO SEGURO";
-    document.getElementById("manut-texto").textContent = "Ainda não é seguro intervir. Realize as seguintes pendências:";
-    for (var i = 0; i < pendencias.length; i++) {
-      lista.innerHTML += "<li>" + pendencias[i] + "</li>";
-    }
-  }
-}
-
-function limparManutencao() {
-  document.getElementById("manut-caixa").className = "manut-caixa";
-  document.getElementById("manut-nome").textContent = "AGUARDANDO";
-  document.getElementById("manut-texto").textContent = "Inicie o sistema e clique no botão acima para saber se está seguro fazer a manutenção.";
-  document.getElementById("manut-lista").innerHTML = "";
-}
-
 function reiniciar() {
   clearTimeout(relogioFalha);
   clearInterval(relogioSensores);
@@ -411,9 +480,7 @@ function reiniciar() {
   submenu.hidden = true;
   botaoIniciar.disabled = false;
   botaoFalha.disabled = true;
-  botaoManutencao.disabled = true;
   mostrarEstado("desligado");
-  limparManutencao();
   for (var nome in normais) {
     var elemento = document.getElementById(nome);
     elemento.textContent = "--";
@@ -424,6 +491,11 @@ function reiniciar() {
 botaoIniciar.addEventListener("click", iniciar);
 botaoFalha.addEventListener("click", abrirMenu);
 botaoReiniciar.addEventListener("click", reiniciar);
-botaoManutencao.addEventListener("click", verificarManutencao);
+
+// NOVO (Julia): tira a caixa "Manutenção" da tela e deixa o conteúdo ocupar a largura toda
+var caixaLateral = document.querySelector(".lateral");
+if (caixaLateral) caixaLateral.remove();
+var layout = document.querySelector(".layout");
+if (layout) layout.style.gridTemplateColumns = "1fr";
 
 montarSubmenu();
