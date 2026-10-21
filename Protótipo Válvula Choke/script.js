@@ -1,4 +1,4 @@
-  // ================= JavaScript: o comportamento =================
+// ================= JavaScript: o comportamento =================
 
   // 1) AS PEÇAS DA VÁLVULA
   // Os números e os nomes são os da tabela "Material Specification" da choke de luva externa (External Sleeve Choke Valve), catálogo DHV, página 6.
@@ -235,6 +235,104 @@
   var relogioFalha = null;
   var relogioSensores = null;
 
+  // ================= NOVO (Julia): envio do alerta para o n8n pelo MQTT =================
+  // Tudo que está entre esta linha e "FIM DO MQTT" foi adicionado. O resto do arquivo continua igual.
+
+  // a) Onde fica o broker (o "carteiro") e em qual tópico (o "grupo") este protótipo publica
+  var BROKER = "wss://broker.hivemq.com:8884/mqtt";
+  var TOPICO = "inspectai-ibmecjr/compressor/CHOKE-01";
+  var MAQUINA = "Válvula Choke 01";
+  var clienteMQTT = null;
+
+  // b) Informações de cada sensor que o n8n precisa: nome, unidade e faixa segura (min e max)
+  //    As faixas são valores de demonstração, escolhidos em volta dos valores normais.
+  var infoSensores = {
+    pressaoEntrada: { nome: "Pressão de entrada", un: "psi",  min: 2900, max: 3200 },
+    pressaoSaida:   { nome: "Pressão de saída",   un: "psi",  min: 700,  max: 900 },
+    vazao:          { nome: "Vazão",              un: "gpm",  min: 130,  max: 180 },
+    desvio:         { nome: "Desvio do Cv",       un: "%",    min: -5,   max: 5 },
+    areia:          { nome: "Nível de areia",     un: "/10",  min: 0,    max: 3 },
+    vibracao:       { nome: "Vibração",           un: "mm/s", min: 0,    max: 3.5 },
+    abertura:       { nome: "Abertura da choke",  un: "%",    min: 50,   max: 75 },
+    temperatura:    { nome: "Temperatura",        un: "°C",   min: 10,   max: 80 }
+  };
+
+  // c) Mostra no canto da tela se o MQTT está conectado e se o alerta foi enviado
+  function mostrarStatusMQTT(texto) {
+    var caixa = document.getElementById("mqtt-status");
+    if (!caixa) {                                   // se ainda não existe, cria a caixinha
+      caixa = document.createElement("div");
+      caixa.id = "mqtt-status";
+      caixa.style.cssText = "position:fixed;bottom:12px;right:12px;z-index:9;background:#F5F4EF;color:#153049;" +
+                            "border:2px solid #1D908F;border-radius:10px;padding:8px 12px;font:bold 14px Arial,sans-serif;";
+      document.body.appendChild(caixa);
+    }
+    caixa.textContent = "📡 MQTT: " + texto;
+  }
+
+  // d) Carrega a biblioteca do MQTT e conecta no broker (assim o index.html não precisa mudar)
+  function conectarMQTT() {
+    mostrarStatusMQTT("Conectando...");
+    var biblioteca = document.createElement("script");
+    biblioteca.src = "https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js";
+    biblioteca.onload = function () {
+      clienteMQTT = mqtt.connect(BROKER);
+      clienteMQTT.on("connect", function () { mostrarStatusMQTT("✅ Conectado ao broker"); });
+      clienteMQTT.on("error", function (erro) { mostrarStatusMQTT("❌ Erro: " + erro.message); });
+    };
+    biblioteca.onerror = function () { mostrarStatusMQTT("❌ Não consegui carregar a biblioteca (sem internet?)"); };
+    document.head.appendChild(biblioteca);
+  }
+
+  // e) Escolhe o sensor principal do problema: o que mais saiu do normal, comparando com o tamanho da faixa
+  function sensorPrincipal(falha) {
+    var melhor = null, maiorDesvio = -1;
+    for (var nome in falha.sensores) {
+      var info = infoSensores[nome];
+      var desvioRelativo = Math.abs(falha.sensores[nome] - normais[nome]) / (info.max - info.min);
+      if (desvioRelativo > maiorDesvio) { maiorDesvio = desvioRelativo; melhor = nome; }
+    }
+    return melhor;
+  }
+
+  // f) Monta a mensagem do alerta com os mesmos nomes de campo que o n8n já usa e PUBLICA no tópico
+  function enviarAlerta(falha) {
+    if (!clienteMQTT || !clienteMQTT.connected) { mostrarStatusMQTT("❌ Alerta NÃO enviado: sem conexão com o broker"); return; }
+    var principal = sensorPrincipal(falha);
+    var info = infoSensores[principal];
+
+    var outros = [];                                // todos os sensores afetados, em texto
+    for (var nome in falha.sensores) {
+      outros.push(infoSensores[nome].nome + ": " + falha.sensores[nome] + " " + infoSensores[nome].un);
+    }
+
+    var mensagem = {
+      maquina: MAQUINA,
+      dataHora: new Date().toISOString(),
+      status: falha.nivel === "atencao" ? "critico" : "alerta",   // o n8n entende "critico" ou "alerta"
+      problema: falha.nome,
+      causa: falha.causa,
+      acao: falha.acao,
+      dias: falha.dias,
+      setor: falha.setor,
+      nome: info.nome,                              // o sensor principal do problema
+      un: info.un,
+      valor: falha.sensores[principal],
+      media: normais[principal],
+      min: info.min,
+      max: info.max,
+      sensoresAfetados: outros.join("; ")
+    };
+
+    // QoS 1 = "pelo menos uma vez": o broker precisa confirmar (PUBACK)
+    clienteMQTT.publish(TOPICO, JSON.stringify(mensagem), { qos: 1 }, function (erro) {
+      mostrarStatusMQTT(erro ? "❌ Alerta NÃO enviado: " + erro.message : "📤 Alerta enviado e confirmado pelo broker (QoS 1)");
+    });
+  }
+
+  conectarMQTT();
+  // ================= FIM DO MQTT =================
+
   // 4) ENCONTRAR AS PEÇAS DA PÁGINA pelo id
   var valvula = document.getElementById("valvula");
   var caixaEstado = document.getElementById("estado");
@@ -294,6 +392,7 @@
     if (!sistemaLigado) return;
     clearTimeout(relogioFalha);
     falhaAtual = falhas[posicao];
+    enviarAlerta(falhaAtual);                             // NOVO (Julia): manda o alerta pro n8n
 
     valvula.classList.remove("aviso", "atencao");
     valvula.classList.add("ligada", falhaAtual.nivel);
