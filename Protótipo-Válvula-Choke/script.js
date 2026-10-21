@@ -498,4 +498,9 @@ if (caixaLateral) caixaLateral.remove();
 var layout = document.querySelector(".layout");
 if (layout) layout.style.gridTemplateColumns = "1fr";
 
+// NOVO (Julia): deixa o desenho da válvula menor e centralizado
+// (para mudar o tamanho, é só trocar o número: maior = desenho maior)
+valvula.style.maxWidth = "560px";
+valvula.style.margin = "0 auto";
+
 montarSubmenu();
