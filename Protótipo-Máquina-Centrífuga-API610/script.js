@@ -33,6 +33,92 @@
   var relogioProblema = null;  // o "relógio" que vai sortear o problema
   var relogioSensores = null;  // o "relógio" que atualiza os números a cada segundo
 
+  // ================= NOVO (Julia): envio do alerta para o n8n pelo MQTT =================
+  // Tudo que está entre esta linha e "FIM DO MQTT" foi adicionado. O resto do arquivo continua igual
+  // (só 3 linhas marcadas com "NOVO (Julia)" lá embaixo, nas funções provocarProblema, atualizar e reiniciar).
+
+  // a) Onde fica o broker (o "carteiro") e em qual tópico (o "grupo") este protótipo publica
+  var BROKER = "wss://broker.hivemq.com:8884/mqtt";
+  var TOPICO = "inspectai-ibmecjr/compressor/BOMBA-API610";
+  var MAQUINA = "Bomba Centrífuga API 610";
+  var clienteMQTT = null;
+
+  // b) Informações de cada sensor que o n8n precisa (os textos são os mesmos dos cartões do HTML)
+  var infoSensores = {
+    vazao:       { nome: "Vazão do Petróleo",   un: "m³/h",   setor: "Operações de Produção",      componente: "Rotor / Impelidor: erosão das pás internas ou cavitação na linha de sucção." },
+    pressao:     { nome: "Pressão de Operação", un: "bar",    setor: "Engenharia de Processos",    componente: "Selo Mecânico / Válvulas: perda de contenção primária nas faces de vedação." },
+    temperatura: { nome: "Temperatura",         un: "°C",     setor: "Manutenção de Equipamentos", componente: "Mancal e Ventilação: degradação do filme lubrificante e atrito metálico severo." },
+    vibracao:    { nome: "Vibração Mecânica",   un: "mm/s",   setor: "Manutenção Mecânica",        componente: "Rolamento Radial e Eixo: folga mecânica, desalinhamento ou fissura na pista." },
+    consumo:     { nome: "Consumo Elétrico",    un: "kWh/m³", setor: "Utilidades e Eficiência",    componente: "Motor Elétrico: aumento de corrente exigido para vencer resistência mecânica." }
+  };
+
+  // c) Mostra no canto da tela se o MQTT está conectado e se o alerta foi enviado
+  function mostrarStatusMQTT(texto) {
+    var caixa = document.getElementById("mqtt-status");
+    if (!caixa) {                                   // se ainda não existe, cria a caixinha
+      caixa = document.createElement("div");
+      caixa.id = "mqtt-status";
+      caixa.style.cssText = "position:fixed;bottom:12px;right:12px;z-index:9;background:#F0EFEA;color:#12304F;" +
+                            "border:2px solid #4CC9F0;border-radius:10px;padding:8px 12px;font:bold 14px Arial,sans-serif;";
+      document.body.appendChild(caixa);
+    }
+    caixa.textContent = "📡 MQTT: " + texto;
+  }
+
+  // d) Carrega a biblioteca do MQTT e conecta no broker (assim o index.html não precisa mudar)
+  function conectarMQTT() {
+    mostrarStatusMQTT("Conectando...");
+    var biblioteca = document.createElement("script");
+    biblioteca.src = "https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js";
+    biblioteca.onload = function () {
+      clienteMQTT = mqtt.connect(BROKER);
+      clienteMQTT.on("connect", function () { mostrarStatusMQTT("✅ Conectado ao broker"); });
+      clienteMQTT.on("error", function (erro) { mostrarStatusMQTT("❌ Erro: " + erro.message); });
+    };
+    biblioteca.onerror = function () { mostrarStatusMQTT("❌ Não consegui carregar a biblioteca (sem internet?)"); };
+    document.head.appendChild(biblioteca);
+  }
+
+  // e) Monta a mensagem do alerta com os mesmos nomes de campo que o n8n já usa e PUBLICA no tópico
+  //    sensor = o sensor com problema | valor = o valor lido | status = "alerta" ou "risco"
+  function enviarAlerta(sensor, valor, status) {
+    if (!clienteMQTT || !clienteMQTT.connected) { mostrarStatusMQTT("❌ Alerta NÃO enviado: sem conexão com o broker"); return; }
+    var info = infoSensores[sensor.id];
+    var mensagem = {
+      maquina: MAQUINA,
+      dataHora: new Date().toISOString(),
+      status: status === "risco" ? "critico" : "alerta",          // o n8n entende "critico" ou "alerta"
+      problema: info.nome + (status === "risco" ? " em nível de risco" : " fora do normal"),
+      componente: info.componente,
+      setor: info.setor,
+      nome: info.nome,
+      un: info.un,
+      valor: Number(valor.toFixed(sensor.casas)),
+      media: sensor.media,
+      min: sensor.normalMin,                        // faixa normal (a mesma do cartão)
+      max: sensor.normalMax
+    };
+
+    // QoS 1 = "pelo menos uma vez": o broker precisa confirmar (PUBACK)
+    clienteMQTT.publish(TOPICO, JSON.stringify(mensagem), { qos: 1 }, function (erro) {
+      mostrarStatusMQTT(erro ? "❌ Alerta NÃO enviado: " + erro.message : "📤 Alerta enviado e confirmado pelo broker (QoS 1)");
+    });
+  }
+
+  // f) Os valores caminham aos poucos até o problema. Esta função só envia UMA vez por problema:
+  //    quando o sensor chega no nível que foi pedido (alerta ou risco).
+  function conferirEnvio(sensor, valor, status) {
+    if (!sensor.nivelProblema || sensor.enviado) return;           // sem problema, ou já enviado
+    var chegou = (status === "risco") || (status === "alerta" && sensor.nivelProblema === "alerta");
+    if (chegou) {
+      sensor.enviado = true;
+      enviarAlerta(sensor, valor, status);
+    }
+  }
+
+  conectarMQTT();
+  // ================= FIM DO MQTT =================
+
   // 3) ENCONTRAR AS PEÇAS DA PÁGINA pelo id
   var bomba = document.getElementById("bomba");
   var cardStatus = document.getElementById("card-status");
@@ -80,6 +166,7 @@
     if (!ligado) return;   // bomba desligada, não faz nada
     var sensor = sensores[Math.floor(Math.random() * sensores.length)];   // sorteio
     sensor.alvo = (nivel === "alerta") ? sensor.alvoAlerta : sensor.alvoRisco;
+    sensor.nivelProblema = nivel; sensor.enviado = false;                // NOVO (Julia): marca o problema para enviar
   }
 
   // Roda a cada segundo: move os valores, calcula os status e atualiza a tela.
@@ -90,6 +177,7 @@
       s.valor = s.valor + (s.alvo - s.valor) * 0.35;                    // anda 35% do caminho até o alvo
       var mostrado = s.valor * (1 + (Math.random() - 0.5) * 0.04);     // pequena variação, para parecer vivo
       var status = calcularStatus(s, mostrado);
+      conferirEnvio(s, mostrado, status);                              // NOVO (Julia): envia quando o problema chega
 
       document.getElementById("valor-" + s.id).textContent = mostrado.toFixed(s.casas).replace(".", ",");
       document.getElementById("status-" + s.id).textContent = nomesStatus[status];
@@ -118,6 +206,7 @@
       var s = sensores[i];
       s.valor = s.media;   // o valor atual
       s.alvo = s.media;    // para onde ele está caminhando
+      s.nivelProblema = null; s.enviado = false;   // NOVO (Julia): zera o controle de envio
       document.getElementById("valor-" + s.id).textContent = "--";
       document.getElementById("status-" + s.id).textContent = "Aguardando";
       document.getElementById("card-" + s.id).className = "sensor desligado";
