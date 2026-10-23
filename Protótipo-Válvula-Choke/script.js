@@ -241,15 +241,29 @@ var relogioSensores = null;
     temperatura:    { nome: "Temperatura",        un: "°C",   min: 10,   max: 80 }
   };
 
-  function mostrarStatusMQTT(texto) {
-    var caixa = document.getElementById("mqtt-status");
-    if (!caixa) {
-      caixa = document.createElement("div");
-      caixa.id = "mqtt-status";
-      caixa.style.cssText = "position:fixed;bottom:12px;right:12px;z-index:9;background:#F5F4EF;color:#153049;" +
-                            "border:2px solid #1D908F;border-radius:10px;padding:8px 12px;font:bold 14px Arial,sans-serif;";
-      document.body.appendChild(caixa);
+  // NOVO (Julia): as caixinhas do MQTT e do ML ficam numa barra logo abaixo do card de status
+  // (antes ficavam "flutuando" no canto e cobriam os cartões dos sensores)
+  function caixaNaBarra(id, corBorda) {
+    var caixa = document.getElementById(id);
+    if (caixa) return caixa;
+    var barra = document.getElementById("barra-backend");
+    if (!barra) {
+      barra = document.createElement("div");
+      barra.id = "barra-backend";
+      barra.style.cssText = "display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;";
+      var card = document.getElementById("estado");
+      if (card) card.insertAdjacentElement("afterend", barra); else document.body.appendChild(barra);
     }
+    caixa = document.createElement("div");
+    caixa.id = id;
+    caixa.style.cssText = "background:#F5F4EF;color:#153049;border:2px solid " + corBorda + ";border-radius:10px;" +
+                          "padding:8px 12px;font:bold 14px Arial,sans-serif;";
+    barra.appendChild(caixa);
+    return caixa;
+  }
+
+  function mostrarStatusMQTT(texto) {
+    var caixa = caixaNaBarra("mqtt-status", "#1D908F");
     caixa.textContent = "📡 MQTT: " + texto;
   }
 
@@ -328,14 +342,7 @@ var relogioSensores = null;
 
   // a) Caixinha no canto esquerdo mostrando o que o ML está fazendo
   function mostrarStatusML(texto) {
-    var caixa = document.getElementById("ml-status");
-    if (!caixa) {
-      caixa = document.createElement("div");
-      caixa.id = "ml-status";
-      caixa.style.cssText = "position:fixed;bottom:12px;left:12px;z-index:9;max-width:46%;background:#F5F4EF;color:#153049;" +
-                            "border:2px solid #7B61FF;border-radius:10px;padding:8px 12px;font:bold 14px Arial,sans-serif;";
-      document.body.appendChild(caixa);
-    }
+    var caixa = caixaNaBarra("ml-status", "#7B61FF");
     caixa.textContent = "🤖 ML: " + texto;
   }
 
