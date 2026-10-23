@@ -53,15 +53,29 @@
   };
 
   // c) Mostra no canto da tela se o MQTT está conectado e se o alerta foi enviado
-  function mostrarStatusMQTT(texto) {
-    var caixa = document.getElementById("mqtt-status");
-    if (!caixa) {                                   // se ainda não existe, cria a caixinha
-      caixa = document.createElement("div");
-      caixa.id = "mqtt-status";
-      caixa.style.cssText = "position:fixed;bottom:12px;right:12px;z-index:9;background:#F0EFEA;color:#12304F;" +
-                            "border:2px solid #4CC9F0;border-radius:10px;padding:8px 12px;font:bold 14px Arial,sans-serif;";
-      document.body.appendChild(caixa);
+  // NOVO (Julia): as caixinhas do MQTT e do ML ficam numa barra logo abaixo do card de status
+  // (antes ficavam "flutuando" no canto e cobriam os cartões dos sensores)
+  function caixaNaBarra(id, corBorda) {
+    var caixa = document.getElementById(id);
+    if (caixa) return caixa;
+    var barra = document.getElementById("barra-backend");
+    if (!barra) {
+      barra = document.createElement("div");
+      barra.id = "barra-backend";
+      barra.style.cssText = "display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;";
+      var card = document.getElementById("card-status");
+      if (card) card.insertAdjacentElement("afterend", barra); else document.body.appendChild(barra);
     }
+    caixa = document.createElement("div");
+    caixa.id = id;
+    caixa.style.cssText = "background:#F0EFEA;color:#12304F;border:2px solid " + corBorda + ";border-radius:10px;" +
+                          "padding:8px 12px;font:bold 14px Arial,sans-serif;";
+    barra.appendChild(caixa);
+    return caixa;
+  }
+
+  function mostrarStatusMQTT(texto) {
+    var caixa = caixaNaBarra("mqtt-status", "#4CC9F0");
     caixa.textContent = "📡 MQTT: " + texto;
   }
 
@@ -81,7 +95,7 @@
 
   // e) Monta a mensagem do alerta com os mesmos nomes de campo que o n8n já usa e PUBLICA no tópico
   //    sensor = o sensor com problema | valor = o valor lido | status = "alerta" ou "critico"
-  function enviarAlerta(sensor, valor, status) {
+  function enviarAlerta(sensor, valor, status, extra) {   // NOVO (Julia): "extra" = campos do machine learning
     if (!clienteMQTT || !clienteMQTT.connected) { mostrarStatusMQTT("❌ Alerta NÃO enviado: sem conexão com o broker"); return; }
     var info = infoSensores[sensor.id];
     var mensagem = {
@@ -98,6 +112,7 @@
       min: sensor.normalMin,                        // faixa normal (a mesma do cartão)
       max: sensor.normalMax
     };
+    for (var campo in (extra || {})) mensagem[campo] = extra[campo];   // NOVO (Julia): junta os campos do ML
 
     // QoS 1 = "pelo menos uma vez": o broker precisa confirmar (PUBACK)
     clienteMQTT.publish(TOPICO, JSON.stringify(mensagem), { qos: 1 }, function (erro) {
@@ -109,6 +124,7 @@
   //    quando o sensor chega no nível que foi pedido (alerta ou critico).
   function conferirEnvio(sensor, valor, status) {
     if (!sensor.nivelProblema || sensor.enviado) return;           // sem problema, ou já enviado
+    if (sensor.ml && sensor.ml.avisou && status !== "critico") return;  // NOVO (Julia): o ML já avisou; só manda de novo se virar crítico
     var chegou = (status === "critico") || (status === "alerta" && sensor.nivelProblema === "alerta");
     if (chegou) {
       sensor.enviado = true;
@@ -118,6 +134,103 @@
 
   conectarMQTT();
   // ================= FIM DO MQTT =================
+
+  // ================= NOVO (Julia): MACHINE LEARNING (detecção de anomalia) =================
+  // A ideia: o sistema APRENDE o normal DESTA bomba (a média e a variação comum de cada sensor)
+  // e avisa quando uma leitura foge muito desse padrão, ANTES de passar do limite fixo da faixa.
+  // É um modelo estatístico simples (z-score): z = (leitura - média aprendida) / desvio padrão aprendido.
+  var ML_APRENDER = 8;   // quantas leituras normais ele usa para aprender o padrão
+  var ML_LIMITE = 3;     // a partir de quantos desvios padrão de distância já é anomalia
+  var ML_JANELA = 30;    // guarda só as últimas 30 leituras normais (vai se atualizando)
+  var mlAviso = "";      // a última anomalia encontrada (fica na tela até reiniciar)
+
+  // a) Caixinha no canto esquerdo mostrando o que o ML está fazendo
+  function mostrarStatusML(texto) {
+    var caixa = caixaNaBarra("ml-status", "#7B61FF");
+    caixa.textContent = "🤖 ML: " + texto;
+  }
+
+  // b) Média e desvio padrão de uma lista de números
+  function mlEstatistica(lista) {
+    var media = lista.reduce(function (a, b) { return a + b; }, 0) / lista.length;
+    var variancia = lista.reduce(function (a, b) { return a + (b - media) * (b - media); }, 0) / lista.length;
+    // o desvio nunca fica menor que 1% da média (evita alarme falso por ruído pequeno do sensor)
+    return { media: media, desvio: Math.max(Math.sqrt(variancia), Math.abs(media) * 0.01) };
+  }
+
+  function mlNumero(n, casas) { return n.toFixed(casas).replace(".", ","); }
+
+  // c) Atualiza a caixinha: aprendendo, monitorando ou anomalia encontrada
+  function mlAtualizarTela() {
+    if (mlAviso) { mostrarStatusML(mlAviso); return; }
+    var menor = Math.min.apply(null, sensores.map(function (s) { return s.ml ? s.ml.normais.length : 0; }));
+    if (menor < ML_APRENDER) mostrarStatusML("aprendendo o normal desta bomba... (" + menor + "/" + ML_APRENDER + " leituras)");
+    else mostrarStatusML("normal desta bomba aprendido ✅ monitorando os 5 sensores");
+  }
+
+  // d) Roda a cada segundo, para cada sensor: aprende ou procura anomalia
+  function mlAnalisar(s, valor) {
+    if (!s.ml) s.ml = { normais: [], avisou: false, anterior: null };
+    var m = s.ml;
+
+    // Fase 1: ainda aprendendo o normal desta bomba
+    if (m.normais.length < ML_APRENDER) {
+      m.normais.push(valor);
+      m.anterior = valor;
+      mlAtualizarTela();
+      return;
+    }
+
+    // Fase 2: compara a leitura com o padrão aprendido
+    var est = mlEstatistica(m.normais);
+    var z = (valor - est.media) / est.desvio;
+
+    if (Math.abs(z) < 3) {                                   // leitura normal: continua aprendendo
+      m.normais.push(valor);
+      if (m.normais.length > ML_JANELA) m.normais.shift();
+    } else if (Math.abs(z) >= ML_LIMITE && !m.avisou && !s.enviado) {
+      m.avisou = true;
+      var info = infoSensores[s.id];
+      var statusRegra = calcularStatus(s, valor);
+      var porcento = Math.abs(valor - est.media) / est.media * 100;
+      var direcao = valor < est.media ? "abaixo" : "acima";
+
+      // Previsão: no ritmo atual, em quantos segundos passa do limite da faixa normal?
+      var velocidade = m.anterior === null ? 0 : valor - m.anterior;
+      var limite = velocidade < 0 ? s.normalMin : s.normalMax;
+      var previsao = "";
+      if (statusRegra === "normal" && velocidade !== 0 && (limite - valor) / velocidade > 0) {
+        previsao = " No ritmo atual, passa do limite da faixa em cerca de " + Math.ceil((limite - valor) / velocidade) + " s.";
+      }
+
+      var explicacao = "O machine learning aprendeu que o normal desta bomba é " + mlNumero(est.media, s.casas) + " " + info.un +
+        ". A leitura " + mlNumero(valor, s.casas) + " " + info.un + " está " + mlNumero(porcento, 0) + "% " + direcao +
+        " desse normal, uma distância de " + mlNumero(Math.abs(z), 1) + " desvios padrão (o comum é até 3)" +
+        (statusRegra === "normal" ? ", mesmo ainda dentro da faixa segura (" + s.normalMin + " a " + s.normalMax + ")." : ".") + previsao;
+
+      enviarAlerta(s, valor, statusRegra === "critico" ? "critico" : "alerta", {
+        problema: info.nome + (statusRegra === "normal" ? ": tendência anormal detectada pelo ML (ainda dentro da faixa)" : " fora do padrão (detectado pelo ML)"),
+        causa: explicacao,
+        ml: mlNumero(Math.abs(z), 1) + " desvios padrão"
+      });
+      if (statusRegra === "critico") s.enviado = true;       // já foi como crítico: não precisa mandar de novo
+
+      mlAviso = info.nome + " fora do padrão (" + mlNumero(Math.abs(z), 1) + " desvios)" +
+        (statusRegra === "normal" ? " → alerta enviado ANTES do limite!" : " → alerta enviado");
+      mlAtualizarTela();
+    }
+    m.anterior = valor;
+  }
+
+  // e) Zera os avisos ao reiniciar (o normal aprendido continua guardado, como numa máquina real)
+  function mlReiniciar() {
+    mlAviso = "";
+    for (var i = 0; i < sensores.length; i++) {
+      if (sensores[i].ml) { sensores[i].ml.avisou = false; sensores[i].ml.anterior = null; }
+    }
+    mlAtualizarTela();
+  }
+  // ================= FIM DO MACHINE LEARNING =================
 
   // 3) ENCONTRAR AS PEÇAS DA PÁGINA pelo id
   var bomba = document.getElementById("bomba");
@@ -177,6 +290,7 @@
       s.valor = s.valor + (s.alvo - s.valor) * 0.35;                    // anda 35% do caminho até o alvo
       var mostrado = s.valor * (1 + (Math.random() - 0.5) * 0.04);     // pequena variação, para parecer vivo
       var status = calcularStatus(s, mostrado);
+      mlAnalisar(s, mostrado);                                         // NOVO (Julia): machine learning olha a leitura primeiro
       conferirEnvio(s, mostrado, status);                              // NOVO (Julia): envia quando o problema chega
 
       document.getElementById("valor-" + s.id).textContent = mostrado.toFixed(s.casas).replace(".", ",");
@@ -212,6 +326,7 @@
       document.getElementById("card-" + s.id).className = "sensor desligado";
       document.getElementById("anel-" + s.id).setAttribute("class", "anel desligado");
     }
+    mlReiniciar();   // NOVO (Julia): zera os avisos do machine learning
   }
 
   // 5) LIGAR CADA BOTÃO À SUA FUNÇÃO
