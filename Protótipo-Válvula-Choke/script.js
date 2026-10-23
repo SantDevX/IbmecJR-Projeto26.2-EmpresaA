@@ -281,9 +281,10 @@ var relogioSensores = null;
     var principal = sensorPrincipal(falha);
     var info = infoSensores[principal];
 
+    var ml = mlAnalisarFalha(falha);   // NOVO (Julia): machine learning compara com o normal aprendido
     var outros = [];
     for (var nome in falha.sensores) {
-      outros.push(infoSensores[nome].nome + ": " + falha.sensores[nome] + " " + infoSensores[nome].un);
+      outros.push(infoSensores[nome].nome + ": " + falha.sensores[nome] + " " + infoSensores[nome].un + (ml.textos[nome] || ""));
     }
 
     var mensagem = {
@@ -291,7 +292,7 @@ var relogioSensores = null;
       dataHora: new Date().toISOString(),
       status: falha.nivel === "critico" ? "critico" : "alerta",
       problema: falha.nome,
-      causa: falha.causa,
+      causa: falha.causa + ml.resumo,   // NOVO (Julia): junta o resumo do machine learning
       cadeia: falha.cadeia,
       acao: falha.acao,
       dias: falha.dias,
@@ -313,6 +314,96 @@ var relogioSensores = null;
 
   conectarMQTT();
   // ================= FIM DO MQTT =================
+
+  // ================= NOVO (Julia): MACHINE LEARNING (detecção de anomalia) =================
+  // A ideia: o sistema APRENDE o normal DESTA válvula (a média e a variação comum de cada sensor)
+  // enquanto ela funciona bem. Quando chega uma falha, ele mostra quais sensores fugiram do padrão,
+  // inclusive os que ainda estão DENTRO da faixa fixa (que um alarme comum não pegaria).
+  // É um modelo estatístico simples (z-score): z = (leitura - média aprendida) / desvio padrão aprendido.
+  var ML_APRENDER = 8;   // quantas leituras normais ele usa para aprender o padrão
+  var ML_LIMITE = 3;     // a partir de quantos desvios padrão de distância já é anomalia
+  var ML_JANELA = 30;    // guarda só as últimas 30 leituras normais (vai se atualizando)
+  var mlLeituras = {};   // as leituras normais de cada sensor
+  var mlAviso = "";      // o resultado da última análise (fica na tela até reiniciar)
+
+  // a) Caixinha no canto esquerdo mostrando o que o ML está fazendo
+  function mostrarStatusML(texto) {
+    var caixa = document.getElementById("ml-status");
+    if (!caixa) {
+      caixa = document.createElement("div");
+      caixa.id = "ml-status";
+      caixa.style.cssText = "position:fixed;bottom:12px;left:12px;z-index:9;max-width:46%;background:#F5F4EF;color:#153049;" +
+                            "border:2px solid #7B61FF;border-radius:10px;padding:8px 12px;font:bold 14px Arial,sans-serif;";
+      document.body.appendChild(caixa);
+    }
+    caixa.textContent = "🤖 ML: " + texto;
+  }
+
+  // b) Média e desvio padrão (o desvio nunca fica menor que 1% da média, pra não dar alarme falso por ruído)
+  function mlEstatistica(lista) {
+    var media = lista.reduce(function (a, b) { return a + b; }, 0) / lista.length;
+    var variancia = lista.reduce(function (a, b) { return a + (b - media) * (b - media); }, 0) / lista.length;
+    return { media: media, desvio: Math.max(Math.sqrt(variancia), Math.abs(media) * 0.01) };
+  }
+
+  function mlNumero(n, casas) { return n.toFixed(casas).replace(".", ","); }
+
+  function mlTreinado(nome) { return (mlLeituras[nome] || []).length >= ML_APRENDER; }
+
+  // c) Atualiza a caixinha: aprendendo, monitorando ou resultado da análise
+  function mlAtualizarTela() {
+    if (mlAviso) { mostrarStatusML(mlAviso); return; }
+    var menor = Math.min.apply(null, Object.keys(normais).map(function (n) { return (mlLeituras[n] || []).length; }));
+    if (menor < ML_APRENDER) mostrarStatusML("aprendendo o normal desta válvula... (" + menor + "/" + ML_APRENDER + " leituras)");
+    else mostrarStatusML("normal desta válvula aprendido ✅ monitorando os 8 sensores");
+  }
+
+  // d) Roda a cada segundo, para cada sensor sem falha: aprende o normal
+  function mlAprender(nome, valor) {
+    var lista = mlLeituras[nome] = mlLeituras[nome] || [];
+    if (lista.length >= ML_APRENDER) {
+      var est = mlEstatistica(lista);
+      if (Math.abs((valor - est.media) / est.desvio) >= 3) return;   // leitura estranha: não entra no aprendizado
+    }
+    lista.push(valor);
+    if (lista.length > ML_JANELA) lista.shift();
+    mlAtualizarTela();
+  }
+
+  // e) Quando chega uma falha: compara cada sensor afetado com o normal aprendido
+  function mlAnalisarFalha(falha) {
+    var resultado = { textos: {}, anomalos: 0, dentroDaFaixa: 0, resumo: "" };
+    for (var nome in falha.sensores) {
+      if (!mlTreinado(nome)) continue;
+      var est = mlEstatistica(mlLeituras[nome]);
+      var valor = falha.sensores[nome];
+      var z = (valor - est.media) / est.desvio;
+      if (Math.abs(z) < ML_LIMITE) continue;
+      var info = infoSensores[nome];
+      var dentro = valor >= info.min && valor <= info.max;
+      resultado.anomalos++;
+      if (dentro) resultado.dentroDaFaixa++;
+      var vezes = est.media !== 0 ? valor / est.media : 0;
+      var porcento = Math.abs(valor - est.media) / Math.abs(est.media || 1) * 100;
+      var sentido = valor < est.media ? "abaixo" : "acima";
+      var comparacao = vezes >= 2 ? mlNumero(vezes, 0) + "x o normal aprendido"           // ex.: "8x o normal aprendido"
+        : porcento >= 100 ? "muito " + sentido + " do normal aprendido"                     // ex.: valor negativo
+        : mlNumero(porcento, 0) + "% " + sentido + " do normal aprendido";                  // ex.: "6% acima do normal aprendido"
+      resultado.textos[nome] = " (ML: " + comparacao + " de " + mlNumero(est.media, casasDecimais[nome]) +
+        (dentro ? ", ainda dentro da faixa fixa" : "") + ")";
+    }
+    if (resultado.anomalos) {
+      resultado.resumo = " Machine learning: " + resultado.anomalos + " sensor(es) fora do padrão aprendido desta válvula" +
+        (resultado.dentroDaFaixa ? ", sendo " + resultado.dentroDaFaixa + " ainda dentro da faixa fixa (um alarme comum não pegaria)." : ".");
+      mlAviso = resultado.anomalos + " sensor(es) fora do padrão" +
+        (resultado.dentroDaFaixa ? " (" + resultado.dentroDaFaixa + " ainda dentro da faixa fixa!)" : "") + " → enviado no alerta";
+    } else {
+      mlAviso = "ainda aprendendo o normal desta válvula, o alerta foi pela regra fixa";
+    }
+    mlAtualizarTela();
+    return resultado;
+  }
+  // ================= FIM DO MACHINE LEARNING =================
 
 var valvula = document.getElementById("valvula");
 var caixaEstado = document.getElementById("estado");
@@ -456,6 +547,7 @@ function atualizarSensores() {
     var comFalha = falhaAtual !== null && falhaAtual.sensores[nome] !== undefined;
     if (comFalha) valor = falhaAtual.sensores[nome];
     valor = valor * (1 + (Math.random() - 0.5) * 0.04);
+    if (!comFalha) mlAprender(nome, valor);   // NOVO (Julia): machine learning aprende o normal
     var elemento = document.getElementById(nome);
     elemento.textContent = valor.toFixed(casasDecimais[nome]).replace(".", ",");
     elemento.parentElement.classList.toggle("ruim", comFalha);
@@ -474,6 +566,7 @@ function reiniciar() {
   botaoIniciar.disabled = false;
   botaoFalha.disabled = true;
   mostrarEstado("desligado");
+  mlAviso = ""; mlAtualizarTela();   // NOVO (Julia): zera o aviso do ML (o normal aprendido continua guardado)
   for (var nome in normais) {
     var elemento = document.getElementById(nome);
     elemento.textContent = "--";
@@ -495,3 +588,4 @@ valvula.style.maxWidth = "560px";
 valvula.style.margin = "0 auto";
 
 montarSubmenu();
+mlAtualizarTela();   // NOVO (Julia): mostra a caixinha do machine learning
